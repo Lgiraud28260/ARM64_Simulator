@@ -4,6 +4,8 @@ A browser-based interactive simulator for the ARM64 (AArch64) instruction set, b
 
 ![Dark themed UI](https://img.shields.io/badge/UI-Dark%20Theme-1e1e2e) ![No dependencies](https://img.shields.io/badge/dependencies-zero-green) ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
 
+![ARM64 Simulator Screenshot](docs/screenshot.png)
+
 ## Features
 
 - **Full editor** with syntax highlighting for ARM64 assembly
