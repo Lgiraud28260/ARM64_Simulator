@@ -571,8 +571,8 @@ loop_i:
     B.GE print_result
 
     // Load row i of A into V0
-    // addr = A + i*3*4
-    MOV X0, #12
+    // addr = A + i*4*4 (rows padded to 4 words = 16 bytes)
+    MOV X0, #16
     MUL X1, X24, X0
     ADD X1, X1, X20
     LD1 {V0.4S}, [X1]   // V0 = A[i][0..2] (4th element = 0)
