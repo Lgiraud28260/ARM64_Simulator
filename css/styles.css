@@ -376,7 +376,39 @@ body {
     border-right: 1px solid var(--border);
     overflow: hidden;
     user-select: none;
-    z-index: 1;
+    z-index: 3;
+}
+
+/* Breakpoint gutter styles */
+#editor-line-numbers > div {
+    cursor: pointer;
+    padding-right: 6px;
+    position: relative;
+}
+
+#editor-line-numbers > div:hover {
+    color: var(--text-secondary);
+}
+
+#editor-line-numbers > div:hover::before {
+    content: '●';
+    position: absolute;
+    left: 2px;
+    color: rgba(243, 139, 168, 0.35);
+}
+
+#editor-line-numbers > div.line-bp {
+    color: var(--accent-red);
+    font-weight: 700;
+}
+
+#editor-line-numbers > div.line-bp:hover::before {
+    display: none;
+}
+
+#editor-line-numbers > div.line-bp.line-pc {
+    background: var(--pc-highlight);
+    color: var(--accent-red);
 }
 
 #editor-highlight {
@@ -386,13 +418,14 @@ body {
     right: 0;
     height: 100%;
     padding: 8px 8px 8px 8px;
+    font-family: var(--font-mono);
     font-size: 12px;
     line-height: 1.5;
     white-space: pre;
     overflow: auto;
     pointer-events: none;
     z-index: 1;
-    color: transparent;
+    color: var(--text-primary);
 }
 
 #editor-textarea {
@@ -406,7 +439,7 @@ body {
     font-size: 12px;
     line-height: 1.5;
     background: transparent;
-    color: var(--text-primary);
+    color: transparent;
     border: none;
     outline: none;
     resize: none;
@@ -561,6 +594,10 @@ body {
 
 .mem-byte.nonzero {
     color: var(--accent-green);
+}
+
+.memory-row.has-data {
+    background: rgba(0, 255, 120, 0.05);
 }
 
 /* Bottom Row: Terminal + Console side by side */

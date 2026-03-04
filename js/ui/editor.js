@@ -7,10 +7,29 @@ export class Editor {
         this.highlight = document.getElementById('editor-highlight');
         this.lineNumbers = document.getElementById('editor-line-numbers');
         this.currentLine = -1;
+        this.breakpoints = new Set();
+        this.onBreakpointChange = null;
 
         this.textarea.addEventListener('input', () => this.update());
         this.textarea.addEventListener('scroll', () => this.syncScroll());
         this.textarea.addEventListener('keydown', (e) => this.handleKey(e));
+
+        // Breakpoint toggle on line number click
+        this.lineNumbers.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // Prevent textarea focus loss/re-trigger
+            e.stopPropagation();
+            const lineDiv = e.target.closest('[data-line]');
+            if (!lineDiv) return;
+            const lineNum = parseInt(lineDiv.dataset.line, 10);
+            if (isNaN(lineNum)) return;
+            if (this.breakpoints.has(lineNum)) {
+                this.breakpoints.delete(lineNum);
+            } else {
+                this.breakpoints.add(lineNum);
+            }
+            this.renderLineNumbers();
+            if (this.onBreakpointChange) this.onBreakpointChange(this.breakpoints);
+        });
 
         this.update();
     }
@@ -50,8 +69,13 @@ export class Editor {
         const lines = this.textarea.value.split('\n');
         let html = '';
         for (let i = 1; i <= lines.length; i++) {
-            const cls = (i === this.currentLine) ? ' style="background:var(--pc-highlight);color:var(--accent-green)"' : '';
-            html += `<div${cls}>${i}</div>`;
+            const isCurrent = (i === this.currentLine);
+            const isBp = this.breakpoints.has(i);
+            let cls = '';
+            if (isBp) cls += ' line-bp';
+            if (isCurrent) cls += ' line-pc';
+            const style = isCurrent ? ' style="background:var(--pc-highlight);color:var(--accent-green)"' : '';
+            html += `<div class="${cls.trim()}" data-line="${i}"${style}>${isBp ? '●' : i}</div>`;
         }
         this.lineNumbers.innerHTML = html;
     }
@@ -146,5 +170,15 @@ export class Editor {
     clearCurrentLine() {
         this.currentLine = -1;
         this.renderLineNumbers();
+    }
+
+    getBreakpoints() {
+        return new Set(this.breakpoints);
+    }
+
+    clearBreakpoints() {
+        this.breakpoints.clear();
+        this.renderLineNumbers();
+        if (this.onBreakpointChange) this.onBreakpointChange(this.breakpoints);
     }
 }

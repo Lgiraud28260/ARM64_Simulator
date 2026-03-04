@@ -73,32 +73,61 @@ export class Assembler {
 
         const instrCount = ast.instructions.length;
 
-        // Resolve labels that point to actual instructions
+        // Resolve labels that point to actual instructions (text section only)
         for (const [name, info] of Object.entries(ast.labels)) {
-            if (info.index < instrCount) {
+            if (info.index < instrCount && (info.section || 'text') !== 'data') {
                 labels[name] = ast.instructions[info.index].address;
             }
-            // Trailing labels resolved below
+            // Data section labels and trailing labels resolved below
         }
 
         // Collect trailing labels and all directives, sort by line number
-        const trailingItems = [];
+        // Separate items by section: 'data' section → DATA segment, 'text' section → after code
+        const dataItems = [];   // items in .data section
+        const textItems = [];   // items in .text section (inline after code)
 
         for (const [name, info] of Object.entries(ast.labels)) {
-            if (info.index >= instrCount) {
-                trailingItems.push({ kind: 'label', name, line: info.line });
+            const section = info.section || 'text';
+            // Include: trailing labels (index >= instrCount) OR data-section labels not yet resolved
+            if (info.index >= instrCount || section === 'data') {
+                if (labels[name] !== undefined) continue; // Already resolved
+                const item = { kind: 'label', name, line: info.line, section };
+                if (section === 'data') {
+                    dataItems.push(item);
+                } else {
+                    textItems.push(item);
+                }
             }
         }
 
         for (const dir of ast.directives) {
-            trailingItems.push({ kind: 'directive', dir, line: dir.line });
+            const item = { kind: 'directive', dir, line: dir.line, section: dir.section || 'text' };
+            if (item.section === 'data') {
+                dataItems.push(item);
+            } else {
+                textItems.push(item);
+            }
         }
 
-        trailingItems.sort((a, b) => a.line - b.line);
+        dataItems.sort((a, b) => a.line - b.line);
+        textItems.sort((a, b) => a.line - b.line);
 
-        // Walk through trailing items, placing data after code
+        // Place .data section items in the DATA segment
+        let dataAddr = SEGMENTS.DATA.start;
+        for (const item of dataItems) {
+            if (item.kind === 'label') {
+                labels[item.name] = dataAddr;
+            } else {
+                const dir = item.dir;
+                const bytes = this._directiveToBytes(dir, labels);
+                result.dataSegments.push({ address: dataAddr, bytes });
+                dataAddr += bytes.length;
+            }
+        }
+
+        // Place .text section inline items after code
         let inlineAddr = addr; // continues after last instruction
-        for (const item of trailingItems) {
+        for (const item of textItems) {
             if (item.kind === 'label') {
                 labels[item.name] = inlineAddr;
             } else {

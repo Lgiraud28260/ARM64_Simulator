@@ -53,7 +53,24 @@ export class UIController {
             onReset: () => this.reset(),
             onSpeedChange: (speed) => this.cpu.setSpeed(speed),
             onLoadExample: (name) => this.loadExample(name),
+            onLoadFile: (name, content) => this.loadFile(name, content),
         });
+
+        // Load file button — direct wiring
+        const btnLoadFile = document.getElementById('btn-load-file');
+        if (btnLoadFile) {
+            btnLoadFile.addEventListener('click', () => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.s,.asm,.S,.txt';
+                input.onchange = () => {
+                    const file = input.files[0];
+                    if (!file) return;
+                    file.text().then(content => this.loadFile(file.name, content));
+                };
+                input.click();
+            });
+        }
 
         // CPU callbacks
         this.cpu.onStep = (count) => {
@@ -73,6 +90,9 @@ export class UIController {
             this.updateUI();
         };
         this.cpu.setConsoleOutput((text) => this.terminalView.write(text));
+
+        // Breakpoint callback
+        this.editor.onBreakpointChange = () => this.updateBreakpointAddresses();
 
         // Initial state
         this.toolbar.enableExecution(false);
@@ -121,6 +141,9 @@ export class UIController {
             this.toolbar.enableExecution(true);
             this.toolbar.setStatus('idle');
             this.toolbar.setStepCount(0);
+
+            // Recalculate breakpoint addresses with new sourceMap
+            this.updateBreakpointAddresses();
 
             this.updateUI();
         } catch (e) {
@@ -185,6 +208,16 @@ export class UIController {
         this.updateUI();
     }
 
+    loadFile(name, content) {
+        this.editor.setValue(content);
+        this.consoleView.clear();
+        this.consoleView.info(`Loaded file: ${name}`);
+        this.cpu.reset();
+        this.toolbar.enableExecution(false);
+        this.machineCodeView.setInstructions([]);
+        this.updateUI();
+    }
+
     loadExample(name) {
         const example = EXAMPLES.find(e => e.name === name);
         if (example) {
@@ -196,6 +229,22 @@ export class UIController {
             this.machineCodeView.setInstructions([]);
             this.updateUI();
         }
+    }
+
+    updateBreakpointAddresses() {
+        if (!this.assemblerResult) {
+            this.cpu.setBreakpoints(new Set());
+            return;
+        }
+        const sm = this.assemblerResult.sourceMap; // address → line
+        const bpLines = this.editor.getBreakpoints();
+        const addresses = new Set();
+        for (const [addr, line] of Object.entries(sm)) {
+            if (bpLines.has(line)) {
+                addresses.add(Number(addr));
+            }
+        }
+        this.cpu.setBreakpoints(addresses);
     }
 
     updateUI() {

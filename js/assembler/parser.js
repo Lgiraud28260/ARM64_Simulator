@@ -16,6 +16,7 @@ export class Parser {
         this.directives = [];
         this.labels = {};
         this.equates = {};
+        this.currentSection = 'text'; // Track current section
 
         while (!this.isAtEnd()) {
             this.skipNewlines();
@@ -35,7 +36,7 @@ export class Parser {
         // Label definition
         while (this.check(TokenType.LABEL_DEF)) {
             const label = this.advance();
-            this.labels[label.value] = { index: this.instructions.length, line: label.line };
+            this.labels[label.value] = { index: this.instructions.length, line: label.line, section: this.currentSection };
         }
 
         this.skipNewlines();
@@ -80,7 +81,7 @@ export class Parser {
                 while (this.match(TokenType.COMMA)) {
                     values.push(this.parseImmediateValue());
                 }
-                this.directives.push({ type: dir.value, values, line, instrIndex: this.instructions.length });
+                this.directives.push({ type: dir.value, values, line, instrIndex: this.instructions.length, section: this.currentSection });
                 break;
             }
             case '.ascii':
@@ -91,12 +92,19 @@ export class Parser {
                     type: dir.value,
                     value: str,
                     line,
-                    instrIndex: this.instructions.length
+                    instrIndex: this.instructions.length,
+                    section: this.currentSection
                 });
                 break;
             }
             case '.text':
+                this.currentSection = 'text';
+                if (this.check(TokenType.LABEL_REF)) this.advance();
+                break;
             case '.data':
+                this.currentSection = 'data';
+                if (this.check(TokenType.LABEL_REF)) this.advance();
+                break;
             case '.global':
             case '.globl':
                 // Skip operand if present

@@ -35,6 +35,7 @@ export class Toolbar {
             const val = this.exampleSelect.value;
             if (val) this.callbacks.onLoadExample?.(val);
         });
+
     }
 
     getSpeed() {

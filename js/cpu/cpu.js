@@ -21,6 +21,7 @@ export class CPU {
         this.speed = 10;       // Steps per second during run
         this.runTimer = null;
         this.instructionCount = 0;
+        this.breakpoints = new Set(); // GUI breakpoint addresses
     }
 
     reset() {
@@ -82,6 +83,13 @@ export class CPU {
         if (pc >= codeEnd || pc < SEGMENTS.CODE.start) {
             this.halted = true;
             if (this.onHalt) this.onHalt('End of program');
+            return false;
+        }
+
+        // GUI breakpoint: stop before executing if in run mode
+        if (this.running && this.breakpoints.has(pc)) {
+            this.running = false;
+            if (this.onHalt) this.onHalt('Breakpoint hit (line)');
             return false;
         }
 
@@ -190,5 +198,9 @@ export class CPU {
 
     setSpeed(speed) {
         this.speed = speed;
+    }
+
+    setBreakpoints(addressSet) {
+        this.breakpoints = addressSet;
     }
 }
