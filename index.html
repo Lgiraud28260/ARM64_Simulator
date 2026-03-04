@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARM64v8 Processor Simulator</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Toolbar -->
+        <div id="toolbar">
+            <h1>ARM64v8 Simulator</h1>
+
+            <button class="toolbar-btn primary" id="btn-assemble">Assemble</button>
+            <div class="toolbar-separator"></div>
+
+            <button class="toolbar-btn" id="btn-step" disabled>Step</button>
+            <button class="toolbar-btn" id="btn-step-back" disabled>Step Back</button>
+            <button class="toolbar-btn" id="btn-run" disabled>Run</button>
+            <button class="toolbar-btn danger" id="btn-reset">Reset</button>
+
+            <div class="toolbar-separator"></div>
+
+            <div id="speed-control">
+                <span>Speed:</span>
+                <input type="range" id="speed-slider" min="1" max="100" value="50">
+                <span id="speed-label">10</span>
+            </div>
+
+            <div class="toolbar-separator"></div>
+
+            <select id="example-select">
+                <option value="">Load Example...</option>
+            </select>
+
+            <div class="toolbar-spacer"></div>
+
+            <span class="status-indicator idle" id="status-indicator"></span>
+            <span id="step-counter" style="font-size:11px;color:var(--text-secondary)">Step: 0</span>
+        </div>
+
+        <!-- Left: Registers -->
+        <div id="left-column">
+            <div class="panel" id="registers-panel">
+                <div class="panel-header">Registers</div>
+                <div class="panel-body"></div>
+            </div>
+
+            <div class="panel" id="neon-registers-panel">
+                <div class="panel-header">
+                    <span>NEON V0-V31</span>
+                    <div class="neon-view-selector">
+                        <button class="neon-view-btn" data-arr="16B">16B</button>
+                        <button class="neon-view-btn" data-arr="8H">8H</button>
+                        <button class="neon-view-btn active" data-arr="4S">4S</button>
+                        <button class="neon-view-btn" data-arr="2D">2D</button>
+                    </div>
+                </div>
+                <div class="panel-body"></div>
+            </div>
+        </div>
+
+        <!-- Center: Editor -->
+        <div class="panel" id="editor-panel">
+            <div class="panel-header">
+                <span>Assembly Editor</span>
+            </div>
+            <div class="editor-container">
+                <div id="editor-line-numbers"></div>
+                <pre id="editor-highlight" class="editor-overlay"></pre>
+                <textarea id="editor-textarea" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div id="right-column">
+            <!-- Machine Code -->
+            <div class="panel" id="machine-code-panel">
+                <div class="panel-header">Machine Code</div>
+                <div class="panel-body"></div>
+            </div>
+
+            <!-- Memory -->
+            <div class="panel" id="memory-panel">
+                <div class="panel-header">
+                    <span>Memory</span>
+                </div>
+                <div class="panel-body"></div>
+            </div>
+        </div>
+
+        <!-- Bottom Row: Terminal + Console -->
+        <div id="bottom-row">
+            <!-- Terminal: program output (SVC write) -->
+            <div class="panel" id="terminal-panel">
+                <div class="panel-header">
+                    <div class="terminal-title">
+                        <div class="terminal-dots">
+                            <span class="dot-red"></span>
+                            <span class="dot-yellow"></span>
+                            <span class="dot-green"></span>
+                        </div>
+                        <span>Terminal</span>
+                    </div>
+                    <button class="toolbar-btn" id="btn-clear-terminal" style="padding:2px 8px;font-size:10px">Clear</button>
+                </div>
+                <div id="terminal-output" class="panel-body"><span class="terminal-cursor"></span></div>
+            </div>
+
+            <!-- Console: assembler/system messages -->
+            <div class="panel" id="console-panel">
+                <div class="panel-header">
+                    <span>Console</span>
+                    <button class="toolbar-btn" onclick="document.getElementById('console-output').innerHTML=''" style="padding:2px 8px;font-size:10px">Clear</button>
+                </div>
+                <div id="console-output" class="panel-body"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+    <script type="module">
+        // Populate example dropdown
+        import { EXAMPLES } from './examples/examples.js';
+        const select = document.getElementById('example-select');
+        EXAMPLES.forEach(ex => {
+            const opt = document.createElement('option');
+            opt.value = ex.name;
+            opt.textContent = ex.name;
+            select.appendChild(opt);
+        });
+    </script>
+</body>
+</html>

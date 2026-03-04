@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ARM64 Simulator - Tests</title>
+    <style>
+        body { font-family: monospace; background: #1e1e2e; color: #cdd6f4; padding: 20px; }
+        .pass { color: #a6e3a1; }
+        .fail { color: #f38ba8; }
+        .section { color: #89b4fa; font-weight: bold; margin-top: 16px; }
+        .summary { margin-top: 20px; font-size: 16px; padding: 10px; border: 1px solid #313244; border-radius: 4px; }
+        #output { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>ARM64v8 Simulator Test Suite</h1>
+    <div id="output"></div>
+    <script type="module">
+        import { runEncoderTests } from './test-encoder.js';
+        import { runDecoderTests } from './test-decoder.js';
+        import { runExecutorTests } from './test-executor.js';
+        import { runMemoryTests } from './test-memory.js';
+
+        const output = document.getElementById('output');
+        let passed = 0, failed = 0;
+
+        function log(msg, cls = '') {
+            const div = document.createElement('div');
+            div.className = cls;
+            div.textContent = msg;
+            output.appendChild(div);
+        }
+
+        function assert(condition, testName) {
+            if (condition) {
+                log(`  PASS: ${testName}`, 'pass');
+                passed++;
+            } else {
+                log(`  FAIL: ${testName}`, 'fail');
+                failed++;
+            }
+        }
+
+        function section(name) {
+            log(`\n=== ${name} ===`, 'section');
+        }
+
+        window.assert = assert;
+        window.section = section;
+        window.log = log;
+
+        try {
+            await runMemoryTests();
+            await runEncoderTests();
+            await runDecoderTests();
+            await runExecutorTests();
+        } catch (e) {
+            log(`\nERROR: ${e.message}\n${e.stack}`, 'fail');
+        }
+
+        log('', '');
+        const summaryClass = failed === 0 ? 'pass' : 'fail';
+        log(`Total: ${passed + failed} | Passed: ${passed} | Failed: ${failed}`, summaryClass);
+
+        const summary = document.createElement('div');
+        summary.className = 'summary ' + summaryClass;
+        summary.textContent = failed === 0
+            ? `All ${passed} tests passed!`
+            : `${failed} test(s) failed out of ${passed + failed}`;
+        output.appendChild(summary);
+    </script>
+</body>
+</html>
