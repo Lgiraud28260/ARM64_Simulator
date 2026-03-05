@@ -6,6 +6,7 @@ export class CacheView {
         this.container = container;
         this.cache = cache;
         this.build();
+        i18n.onChange(() => this.build());
     }
 
     build() {
