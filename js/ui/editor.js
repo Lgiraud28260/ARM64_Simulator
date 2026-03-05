@@ -1,5 +1,5 @@
 // editor.js - Syntax-highlighted editor (textarea + pre overlay)
-import { TOOLTIPS } from '../instruction-tooltips.js';
+import { getTooltip } from '../instruction-tooltips.js';
 
 export class Editor {
     constructor(container) {
@@ -40,7 +40,7 @@ export class Editor {
         this.highlight.addEventListener('mouseover', (e) => {
             const mn = e.target.closest('[data-mn]');
             if (!mn) { this.tooltipEl.style.display = 'none'; return; }
-            const tip = TOOLTIPS[mn.dataset.mn];
+            const tip = getTooltip(mn.dataset.mn);
             if (!tip) { this.tooltipEl.style.display = 'none'; return; }
             this.tooltipEl.textContent = tip;
             const rect = mn.getBoundingClientRect();

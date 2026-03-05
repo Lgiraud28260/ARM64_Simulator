@@ -1,7 +1,9 @@
 // tutorials.js - Tutorial data extracted from course materials
 // Each tutorial has: chapter, title, description, code (starter), solution, check (register/memory expectations)
+import { i18n } from './i18n.js';
+import { TUTORIALS_EN } from './i18n/tutorials-en.js';
 
-export const TUTORIALS = [
+const TUTORIALS_FR = [
     // === Chapter 1: Introduction et Registres ===
     {
         chapter: 1,
@@ -787,3 +789,10 @@ done:
         check: { reg: "X0", expected: "45" }
     }
 ];
+
+export function getTutorials() {
+    return i18n.getLang() === 'en' ? TUTORIALS_EN : TUTORIALS_FR;
+}
+
+// Legacy export
+export const TUTORIALS = TUTORIALS_FR;

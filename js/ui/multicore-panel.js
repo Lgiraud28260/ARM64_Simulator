@@ -1,4 +1,5 @@
 // multicore-panel.js - Dual-core split view
+import { i18n } from '../i18n.js';
 
 export class MulticorePanel {
     constructor(container) {
@@ -61,7 +62,7 @@ export class MulticorePanel {
         // Active CPU indicator
         const activeEl = document.getElementById('mc-active-cpu');
         if (activeEl) {
-            activeEl.innerHTML = `CPU actif: <strong>${this.dualCPU.activeCPU}</strong>`;
+            activeEl.innerHTML = `${i18n.t('activeCPU')(this.dualCPU.activeCPU)}`;
         }
 
         // Update compact registers for both CPUs
@@ -73,7 +74,7 @@ export class MulticorePanel {
         if (conflEl) {
             const conflicts = this.dualCPU.getConflicts();
             if (conflicts.length === 0) {
-                conflEl.innerHTML = '<span class="mc-no-conflict">Pas de conflit detecte</span>';
+                conflEl.innerHTML = `<span class="mc-no-conflict">${i18n.t('noConflict')}</span>`;
             } else {
                 conflEl.innerHTML = conflicts.slice(-5).reverse().map(c =>
                     `<div class="mc-conflict-entry">RACE @ 0x${c.addr.toString(16).toUpperCase()} — CPU0:${c.cpu0} CPU1:${c.cpu1} (step ${c.step})</div>`

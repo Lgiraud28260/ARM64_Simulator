@@ -1,4 +1,5 @@
 // cache-view.js - Cache simulator visualization
+import { i18n } from '../i18n.js';
 
 export class CacheView {
     constructor(container, cache) {
@@ -11,22 +12,22 @@ export class CacheView {
         const body = this.container.querySelector('.panel-body');
         body.innerHTML = `
             <div class="cache-controls">
-                <label>Size:
+                <label>${i18n.t('size')}
                     <select id="cache-size">
                         <option value="256" selected>256B</option>
                         <option value="512">512B</option>
                         <option value="1024">1KB</option>
                     </select>
                 </label>
-                <label>Line:
+                <label>${i18n.t('line')}
                     <select id="cache-line-size">
                         <option value="16" selected>16B</option>
                         <option value="32">32B</option>
                     </select>
                 </label>
-                <label>Assoc:
+                <label>${i18n.t('assoc')}
                     <select id="cache-assoc">
-                        <option value="1" selected>Direct</option>
+                        <option value="1" selected>${i18n.t('direct')}</option>
                         <option value="2">2-way</option>
                         <option value="4">4-way</option>
                     </select>
@@ -35,7 +36,7 @@ export class CacheView {
             </div>
             <div class="cache-stats" id="cache-stats">Hits: 0 | Misses: 0 | Rate: 0%</div>
             <div class="cache-grid" id="cache-grid"></div>
-            <div class="cache-log-title">Derniers acces:</div>
+            <div class="cache-log-title">${i18n.t('recentAccesses')}</div>
             <div class="cache-log" id="cache-log"></div>
         `;
 
@@ -62,7 +63,7 @@ export class CacheView {
         const stats = this.cache.getStats();
         const statsEl = document.getElementById('cache-stats');
         if (statsEl) {
-            statsEl.textContent = `Hits: ${stats.hits} | Misses: ${stats.misses} | Rate: ${stats.hitRate.toFixed(1)}%`;
+            statsEl.textContent = i18n.t('cacheStats')(stats.hits, stats.misses, stats.hitRate.toFixed(1));
         }
 
         // Grid

@@ -12,18 +12,18 @@
         <div id="toolbar">
             <h1>ARM64v8 Simulator</h1>
 
-            <button class="toolbar-btn primary" id="btn-assemble" title="Ctrl+Enter">Assemble</button>
+            <button class="toolbar-btn primary" id="btn-assemble" title="Ctrl+Enter">Assembler</button>
             <div class="toolbar-separator"></div>
 
-            <button class="toolbar-btn" id="btn-step" disabled title="F10">Step</button>
-            <button class="toolbar-btn" id="btn-step-back" disabled title="Shift+F10">Step Back</button>
-            <button class="toolbar-btn" id="btn-run" disabled title="F5">Run</button>
+            <button class="toolbar-btn" id="btn-step" disabled title="F10">Pas</button>
+            <button class="toolbar-btn" id="btn-step-back" disabled title="Shift+F10">Reculer</button>
+            <button class="toolbar-btn" id="btn-run" disabled title="F5">Lancer</button>
             <button class="toolbar-btn danger" id="btn-reset" title="Ctrl+Shift+R">Reset</button>
 
             <div class="toolbar-separator"></div>
 
             <div id="speed-control">
-                <span>Speed:</span>
+                <span>Vitesse :</span>
                 <input type="range" id="speed-slider" min="1" max="100" value="50">
                 <span id="speed-label">10</span>
             </div>
@@ -31,26 +31,31 @@
             <div class="toolbar-separator"></div>
 
             <select id="example-select">
-                <option value="">Load Example...</option>
+                <option value="">Charger un exemple...</option>
             </select>
 
-            <button class="toolbar-btn" id="btn-load-file" title="Load .s/.asm file">&#128194; Load</button>
-            <button class="toolbar-btn" id="btn-save-file" title="Ctrl+S">&#128190; Save</button>
+            <button class="toolbar-btn" id="btn-load-file" title="Charger un fichier .s/.asm">📂 Ouvrir</button>
+            <button class="toolbar-btn" id="btn-save-file" title="Ctrl+S">💾 Sauver</button>
 
             <div class="toolbar-separator"></div>
-            <button class="toolbar-btn" id="btn-dual-core" title="Toggle dual-core mode">Dual Core</button>
+            <button class="toolbar-btn" id="btn-dual-core" title="Mode double coeur">Dual Core</button>
 
             <div class="toolbar-spacer"></div>
 
+            <div class="lang-switcher">
+                <button class="lang-btn" data-lang="fr" title="Francais">🇫🇷</button>
+                <button class="lang-btn" data-lang="en" title="English">🇬🇧</button>
+            </div>
+
             <span class="status-indicator idle" id="status-indicator"></span>
-            <span id="step-counter" style="font-size:11px;color:var(--text-secondary)">Step: 0</span>
+            <span id="step-counter" style="font-size:11px;color:var(--text-secondary)">Pas : 0</span>
         </div>
 
         <!-- Left: Registers -->
         <div id="left-column">
             <div class="panel" id="registers-panel">
                 <div class="panel-header">
-                    <span>Registers</span>
+                    <span>Registres</span>
                     <div class="reg-format-selector">
                         <button class="reg-fmt-btn active" data-fmt="hex">Hex</button>
                         <button class="reg-fmt-btn" data-fmt="dec">Dec</button>
@@ -77,7 +82,7 @@
         <!-- Center: Editor -->
         <div class="panel" id="editor-panel">
             <div class="panel-header">
-                <span>Assembly Editor</span>
+                <span>Editeur Assembleur</span>
             </div>
             <div class="editor-container">
                 <div id="editor-line-numbers"></div>
@@ -90,14 +95,14 @@
         <div id="right-column">
             <!-- Machine Code -->
             <div class="panel" id="machine-code-panel">
-                <div class="panel-header">Machine Code</div>
+                <div class="panel-header"><span>Code Machine</span></div>
                 <div class="panel-body"></div>
             </div>
 
             <!-- Memory -->
             <div class="panel" id="memory-panel">
                 <div class="panel-header">
-                    <span>Memory</span>
+                    <span>Memoire</span>
                 </div>
                 <div class="panel-body"></div>
             </div>
@@ -115,9 +120,9 @@
         <div id="multicore-panel" class="panel" style="display:none;grid-column:1/-1;grid-row:2;">
             <div class="panel-header">
                 <span>Dual Core</span>
-                <button class="toolbar-btn" id="mc-assemble" style="padding:2px 8px;font-size:10px">Assemble Both</button>
-                <button class="toolbar-btn" id="mc-step" style="padding:2px 8px;font-size:10px">Step</button>
-                <button class="toolbar-btn" id="mc-run" style="padding:2px 8px;font-size:10px">Run</button>
+                <button class="toolbar-btn" id="mc-assemble" style="padding:2px 8px;font-size:10px">Assembler les 2</button>
+                <button class="toolbar-btn" id="mc-step" style="padding:2px 8px;font-size:10px">Pas</button>
+                <button class="toolbar-btn" id="mc-run" style="padding:2px 8px;font-size:10px">Lancer</button>
                 <button class="toolbar-btn danger" id="mc-reset" style="padding:2px 8px;font-size:10px">Reset</button>
             </div>
             <div class="panel-body"></div>
@@ -129,7 +134,7 @@
             <div class="panel" id="tutorial-panel">
                 <div class="panel-header">
                     <div class="bottom-tabs">
-                        <button class="bottom-tab active" data-tab="tutorial">Tutorial</button>
+                        <button class="bottom-tab active" data-tab="tutorial">Tutoriel</button>
                         <button class="bottom-tab" data-tab="casm">C↔ASM</button>
                     </div>
                 </div>
@@ -148,7 +153,7 @@
                         </div>
                         <span>Terminal</span>
                     </div>
-                    <button class="toolbar-btn" id="btn-clear-terminal" style="padding:2px 8px;font-size:10px">Clear</button>
+                    <button class="toolbar-btn" id="btn-clear-terminal" style="padding:2px 8px;font-size:10px">Vider</button>
                 </div>
                 <div id="terminal-output" class="panel-body"><span class="terminal-cursor"></span></div>
             </div>
@@ -157,7 +162,7 @@
             <div class="panel" id="console-panel">
                 <div class="panel-header">
                     <span>Console</span>
-                    <button class="toolbar-btn" onclick="document.getElementById('console-output').innerHTML=''" style="padding:2px 8px;font-size:10px">Clear</button>
+                    <button class="toolbar-btn" id="btn-clear-console" onclick="document.getElementById('console-output').innerHTML=''" style="padding:2px 8px;font-size:10px">Vider</button>
                 </div>
                 <div id="console-output" class="panel-body"></div>
             </div>

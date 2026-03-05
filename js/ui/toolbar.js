@@ -1,4 +1,5 @@
 // toolbar.js - Toolbar controls
+import { i18n } from '../i18n.js';
 
 export class Toolbar {
     constructor(callbacks) {
@@ -47,7 +48,7 @@ export class Toolbar {
 
     setRunning(running) {
         if (this.btnRun) {
-            this.btnRun.textContent = running ? 'Stop' : 'Run';
+            this.btnRun.textContent = running ? i18n.t('stop') : i18n.t('run');
             this.btnRun.classList.toggle('danger', running);
         }
         this.btnStep && (this.btnStep.disabled = running);

@@ -1,19 +1,22 @@
 // c-asm-panel.js - C↔ASM comparison split view
-import { C_ASM_EXAMPLES } from '../c-asm-examples.js';
+import { getCASMExamples } from '../c-asm-examples.js';
+import { i18n } from '../i18n.js';
 
 export class CASMPanel {
     constructor(container, callbacks) {
         this.container = container;
         this.callbacks = callbacks; // { onLoadCode }
         this.build();
+        i18n.onChange(() => this.build());
     }
 
     build() {
-        const categories = [...new Set(C_ASM_EXAMPLES.map(e => e.category))];
+        const examples = getCASMExamples();
+        const categories = [...new Set(examples.map(e => e.category))];
 
         let html = `<div class="casm-controls">
             <select id="casm-category">
-                <option value="">Toutes les categories</option>
+                <option value="">${i18n.t('allCategories')}</option>
                 ${categories.map(c => `<option value="${c}">${c}</option>`).join('')}
             </select>
         </div>
@@ -30,21 +33,23 @@ export class CASMPanel {
     }
 
     showList(category) {
+        const examples = getCASMExamples();
         const listEl = document.getElementById('casm-list');
         const detailEl = document.getElementById('casm-detail');
         listEl.style.display = '';
         detailEl.style.display = 'none';
 
         const filtered = category
-            ? C_ASM_EXAMPLES.filter(e => e.category === category)
-            : C_ASM_EXAMPLES;
+            ? examples.filter(e => e.category === category)
+            : examples;
 
-        listEl.innerHTML = filtered.map((ex, i) => `
-            <div class="casm-item" data-idx="${C_ASM_EXAMPLES.indexOf(ex)}">
+        listEl.innerHTML = filtered.map((ex) => {
+            const idx = examples.indexOf(ex);
+            return `<div class="casm-item" data-idx="${idx}">
                 <span class="casm-cat">${ex.category}</span>
                 <span class="casm-title">${ex.title}</span>
-            </div>
-        `).join('');
+            </div>`;
+        }).join('');
 
         listEl.querySelectorAll('.casm-item').forEach(item => {
             item.addEventListener('click', () => {
@@ -54,7 +59,8 @@ export class CASMPanel {
     }
 
     showDetail(idx) {
-        const ex = C_ASM_EXAMPLES[idx];
+        const examples = getCASMExamples();
+        const ex = examples[idx];
         const listEl = document.getElementById('casm-list');
         const detailEl = document.getElementById('casm-detail');
         listEl.style.display = 'none';
@@ -62,7 +68,7 @@ export class CASMPanel {
 
         detailEl.innerHTML = `
             <div class="casm-header">
-                <button class="tutorial-back-btn" id="casm-back">← Retour</button>
+                <button class="tutorial-back-btn" id="casm-back">${i18n.t('back')}</button>
                 <span class="casm-detail-title">${ex.title}</span>
                 <span class="casm-cat">${ex.category}</span>
             </div>
@@ -77,7 +83,7 @@ export class CASMPanel {
                 </div>
             </div>
             <div class="casm-notes">${ex.notes}</div>
-            <button class="toolbar-btn primary tutorial-btn" id="casm-load">Charger l'ASM dans l'editeur</button>
+            <button class="toolbar-btn primary tutorial-btn" id="casm-load">${i18n.t('loadAsmInEditor')}</button>
         `;
 
         detailEl.querySelector('#casm-back').addEventListener('click', () => {
@@ -86,7 +92,6 @@ export class CASMPanel {
         });
 
         detailEl.querySelector('#casm-load').addEventListener('click', () => {
-            // Build a full program from the ASM snippet
             const code = `// C↔ASM: ${ex.title}\n\n_start:\n${ex.asmCode.split('\n').map(l => '    ' + l).join('\n')}\n    BRK #0\n`;
             this.callbacks.onLoadCode(code);
         });

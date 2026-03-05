@@ -1,5 +1,6 @@
 // tutorial-panel.js - Interactive tutorial mode
-import { TUTORIALS } from '../tutorials.js';
+import { getTutorials } from '../tutorials.js';
+import { i18n } from '../i18n.js';
 
 export class TutorialPanel {
     constructor(container, callbacks) {
@@ -7,21 +8,23 @@ export class TutorialPanel {
         this.callbacks = callbacks; // { onLoadCode, onCheckResult }
         this.current = null;
         this.render();
+        i18n.onChange(() => this.render());
     }
 
     render() {
         this.container.innerHTML = '';
+        const tutorials = getTutorials();
 
         // Chapter selector
         const nav = document.createElement('div');
         nav.className = 'tutorial-nav';
 
-        const chapters = [...new Set(TUTORIALS.map(t => t.chapter))];
+        const chapters = [...new Set(tutorials.map(t => t.chapter))];
         for (const ch of chapters) {
             const btn = document.createElement('button');
             btn.className = 'tutorial-ch-btn';
             btn.textContent = ch;
-            btn.title = `Chapitre ${ch}`;
+            btn.title = i18n.t('chapter')(ch);
             btn.addEventListener('click', () => this.showChapter(ch));
             nav.appendChild(btn);
         }
@@ -42,12 +45,13 @@ export class TutorialPanel {
     }
 
     showChapter(ch) {
+        const tutorials = getTutorials();
         // Highlight active chapter button
         this.container.querySelectorAll('.tutorial-ch-btn').forEach(b => {
             b.classList.toggle('active', parseInt(b.textContent) === ch);
         });
 
-        const exercises = TUTORIALS.filter(t => t.chapter === ch);
+        const exercises = tutorials.filter(t => t.chapter === ch);
         this.listEl.innerHTML = '';
         this.listEl.style.display = '';
         this.detailEl.style.display = 'none';
@@ -69,16 +73,16 @@ export class TutorialPanel {
 
         this.detailEl.innerHTML = `
             <div class="tutorial-header">
-                <button class="tutorial-back-btn">← Retour</button>
+                <button class="tutorial-back-btn">${i18n.t('back')}</button>
                 <span class="tutorial-num">${num}</span>
             </div>
             <div class="tutorial-title">${ex.title}</div>
             <div class="tutorial-desc">${ex.description}</div>
             <div class="tutorial-actions">
-                <button class="toolbar-btn tutorial-btn" id="tut-load">Charger l'exercice</button>
-                <button class="toolbar-btn tutorial-btn" id="tut-hint">💡 Indice</button>
-                <button class="toolbar-btn tutorial-btn" id="tut-solution">Voir la solution</button>
-                <button class="toolbar-btn primary tutorial-btn" id="tut-check">✓ Vérifier</button>
+                <button class="toolbar-btn tutorial-btn" id="tut-load">${i18n.t('loadExercise')}</button>
+                <button class="toolbar-btn tutorial-btn" id="tut-hint">${i18n.t('hint')}</button>
+                <button class="toolbar-btn tutorial-btn" id="tut-solution">${i18n.t('viewSolution')}</button>
+                <button class="toolbar-btn primary tutorial-btn" id="tut-check">${i18n.t('check')}</button>
             </div>
             <div class="tutorial-hint" style="display:none">${ex.hint}</div>
             <div class="tutorial-result"></div>
@@ -112,9 +116,9 @@ export class TutorialPanel {
         const result = this.callbacks.onCheckResult(this.current.check);
         const el = this.detailEl.querySelector('.tutorial-result');
         if (result.pass) {
-            el.innerHTML = `<span class="tutorial-pass">✓ Correct ! ${this.current.check.reg} = ${result.actual}</span>`;
+            el.innerHTML = `<span class="tutorial-pass">${i18n.t('correct')(this.current.check.reg, result.actual)}</span>`;
         } else {
-            el.innerHTML = `<span class="tutorial-fail">✗ ${this.current.check.reg} = ${result.actual} (attendu : ${this.current.check.expected})</span>`;
+            el.innerHTML = `<span class="tutorial-fail">${i18n.t('incorrect')(this.current.check.reg, result.actual, this.current.check.expected)}</span>`;
         }
     }
 }

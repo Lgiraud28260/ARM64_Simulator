@@ -20,6 +20,7 @@ import { VirtualFS } from '../virtual-fs.js';
 import { DualCPU } from '../cpu/dual-cpu.js';
 import { MulticorePanel } from './multicore-panel.js';
 import { EXAMPLES } from '../../examples/examples.js';
+import { i18n } from '../i18n.js';
 
 export class UIController {
     constructor() {
@@ -74,7 +75,7 @@ export class UIController {
                 onLoadCode: (code) => {
                     this.editor.setValue(code);
                     this.consoleView.clear();
-                    this.consoleView.info('C↔ASM code loaded — click Assemble');
+                    this.consoleView.info(i18n.t('casmLoaded'));
                     this.cpu.reset();
                     this.toolbar.enableExecution(false);
                     this.machineCodeView.setInstructions([]);
@@ -89,7 +90,7 @@ export class UIController {
                 onLoadCode: (code) => {
                     this.editor.setValue(code);
                     this.consoleView.clear();
-                    this.consoleView.info('Tutorial code loaded — click Assemble');
+                    this.consoleView.info(i18n.t('tutorialLoaded'));
                     this.cpu.reset();
                     this.toolbar.enableExecution(false);
                     this.machineCodeView.setInstructions([]);
@@ -179,7 +180,7 @@ export class UIController {
             this.updateUI();
         };
         this.cpu.onError = (msg) => {
-            this.consoleView.error(`Error: ${msg}`);
+            this.consoleView.error(i18n.t('error')(msg));
             this.toolbar.setRunning(false);
             this.toolbar.setStatus('error');
             this.updateUI();
@@ -191,6 +192,10 @@ export class UIController {
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => this.handleKeyboard(e));
+
+        // Language switcher
+        this._setupLangSwitcher();
+        i18n.onChange(() => this._updateLabels());
 
         // Initial state
         this.toolbar.enableExecution(false);
@@ -207,11 +212,11 @@ export class UIController {
     assemble() {
         this.consoleView.clear();
         this.terminalView.clear();
-        this.consoleView.info('Assembling...');
+        this.consoleView.info(i18n.t('assembling'));
 
         const source = this.editor.getValue();
         if (!source.trim()) {
-            this.consoleView.warn('No source code to assemble');
+            this.consoleView.warn(i18n.t('noSourceCode'));
             return;
         }
 
@@ -220,14 +225,14 @@ export class UIController {
 
             if (this.assemblerResult.errors.length > 0) {
                 for (const err of this.assemblerResult.errors) {
-                    this.consoleView.error(`Line ${err.line}: ${err.message}`);
+                    this.consoleView.error(i18n.t('lineError')(err.line, err.message));
                 }
                 this.toolbar.enableExecution(false);
                 return;
             }
 
             const count = this.assemblerResult.instructions.length;
-            this.consoleView.success(`Assembled ${count} instruction${count !== 1 ? 's' : ''} successfully`);
+            this.consoleView.success(i18n.t('assembledSuccess')(count));
 
             // Load into CPU
             this.heap.reset();
@@ -248,14 +253,14 @@ export class UIController {
 
             this.updateUI();
         } catch (e) {
-            this.consoleView.error(`Assembly error: ${e.message}`);
+            this.consoleView.error(i18n.t('assemblyError')(e.message));
             this.toolbar.enableExecution(false);
         }
     }
 
     step() {
         if (this.cpu.halted) {
-            this.consoleView.warn('Program has halted. Reset to run again.');
+            this.consoleView.warn(i18n.t('haltedMessage'));
             return;
         }
         this.cpu.step();
@@ -264,7 +269,7 @@ export class UIController {
 
     stepBack() {
         if (!this.cpu.stepBack()) {
-            this.consoleView.warn('No more history to step back');
+            this.consoleView.warn(i18n.t('noHistory'));
             return;
         }
         this.updateUI();
@@ -275,10 +280,10 @@ export class UIController {
             this.cpu.stop();
             this.toolbar.setRunning(false);
             this.toolbar.setStatus('idle');
-            this.consoleView.info('Stopped');
+            this.consoleView.info(i18n.t('stopped'));
         } else {
             if (this.cpu.halted) {
-                this.consoleView.warn('Program has halted. Reset to run again.');
+                this.consoleView.warn(i18n.t('haltedMessage'));
                 return;
             }
             this.cpu.run();
@@ -290,7 +295,7 @@ export class UIController {
     async saveFile() {
         const code = this.editor.getValue();
         if (!code.trim()) {
-            this.consoleView.warn('Nothing to save');
+            this.consoleView.warn(i18n.t('nothingToSave'));
             return;
         }
         // Use File System Access API if available (Chrome/Edge)
@@ -306,10 +311,10 @@ export class UIController {
                 const writable = await handle.createWritable();
                 await writable.write(code);
                 await writable.close();
-                this.consoleView.info(`Saved as ${handle.name}`);
+                this.consoleView.info(i18n.t('savedAs')(handle.name));
             } catch (e) {
                 if (e.name !== 'AbortError') {
-                    this.consoleView.error(`Save failed: ${e.message}`);
+                    this.consoleView.error(i18n.t('saveFailed')(e.message));
                 }
             }
         } else {
@@ -320,14 +325,14 @@ export class UIController {
             a.download = 'program.s';
             a.click();
             URL.revokeObjectURL(a.href);
-            this.consoleView.info('File saved as program.s');
+            this.consoleView.info(i18n.t('fileSavedAs')('program.s'));
         }
     }
 
     loadFile(name, content) {
         this.editor.setValue(content);
         this.consoleView.clear();
-        this.consoleView.info(`Loaded file: ${name}`);
+        this.consoleView.info(i18n.t('loadedFile')(name));
         this.cpu.reset();
         this.toolbar.enableExecution(false);
         this.machineCodeView.setInstructions([]);
@@ -339,7 +344,7 @@ export class UIController {
         if (example) {
             this.editor.setValue(example.code);
             this.consoleView.clear();
-            this.consoleView.info(`Loaded example: ${example.name}`);
+            this.consoleView.info(i18n.t('loadedExample')(example.name));
             this.cpu.reset();
             this.toolbar.enableExecution(false);
             this.machineCodeView.setInstructions([]);
@@ -421,6 +426,89 @@ export class UIController {
         }
     }
 
+    _setupLangSwitcher() {
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.lang === i18n.getLang());
+            btn.addEventListener('click', () => {
+                i18n.setLang(btn.dataset.lang);
+                document.querySelectorAll('.lang-btn').forEach(b =>
+                    b.classList.toggle('active', b.dataset.lang === i18n.getLang()));
+            });
+        });
+    }
+
+    _updateLabels() {
+        // Toolbar buttons
+        const setText = (id, key) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = i18n.t(key);
+        };
+        setText('btn-assemble', 'assemble');
+        setText('btn-step', 'step');
+        setText('btn-step-back', 'stepBack');
+        if (!this.cpu.running) setText('btn-run', 'run');
+        setText('btn-reset', 'reset');
+        setText('btn-dual-core', 'dualCore');
+
+        // Speed label
+        const speedSpan = document.querySelector('#speed-control > span:first-child');
+        if (speedSpan) speedSpan.textContent = i18n.t('speed');
+
+        // Load/Save buttons
+        const btnLoad = document.getElementById('btn-load-file');
+        if (btnLoad) btnLoad.textContent = i18n.t('load');
+        const btnSave = document.getElementById('btn-save-file');
+        if (btnSave) btnSave.textContent = i18n.t('save');
+
+        // Step counter
+        const stepCounter = document.getElementById('step-counter');
+        if (stepCounter) stepCounter.textContent = `${i18n.t('stepLabel')} ${this.cpu.stepCount || 0}`;
+
+        // Example dropdown
+        const exSelect = document.getElementById('example-select');
+        if (exSelect && exSelect.options[0]) exSelect.options[0].textContent = i18n.t('loadExample');
+
+        // Panel headers
+        const setHeader = (id, key) => {
+            const panel = document.getElementById(id);
+            if (panel) {
+                const span = panel.querySelector('.panel-header > span');
+                if (span) span.textContent = i18n.t(key);
+            }
+        };
+        setHeader('registers-panel', 'registers');
+        setHeader('neon-registers-panel', 'neonRegisters');
+        setHeader('machine-code-panel', 'machineCode');
+        setHeader('memory-panel', 'memory');
+        setHeader('cache-panel', 'cacheL1');
+        setHeader('console-panel', 'console');
+
+        // Editor header
+        const editorHeader = document.querySelector('#editor-panel .panel-header span');
+        if (editorHeader) editorHeader.textContent = i18n.t('assemblyEditor');
+
+        // Terminal header
+        const termHeader = document.querySelector('#terminal-panel .panel-header .terminal-title span');
+        if (termHeader) termHeader.textContent = i18n.t('terminal');
+
+        // Bottom tabs
+        document.querySelectorAll('.bottom-tab').forEach(tab => {
+            const key = tab.dataset.tab;
+            if (key === 'tutorial') tab.textContent = i18n.t('tutorial');
+            if (key === 'casm') tab.textContent = i18n.t('casm');
+        });
+
+        // Clear buttons
+        const btnClearTerm = document.getElementById('btn-clear-terminal');
+        if (btnClearTerm) btnClearTerm.textContent = i18n.t('clear');
+        const btnClearConsole = document.getElementById('btn-clear-console');
+        if (btnClearConsole) btnClearConsole.textContent = i18n.t('clear');
+
+        // Multicore buttons
+        const mcAssemble = document.getElementById('mc-assemble');
+        if (mcAssemble) mcAssemble.textContent = i18n.t('assembleBoth');
+    }
+
     _setupBottomTabs() {
         document.querySelectorAll('.bottom-tab').forEach(tab => {
             tab.addEventListener('click', () => {
@@ -489,13 +577,13 @@ export class UIController {
                 };
                 this.dualCPU.onConflict = (c) => {
                     this.consoleView.warn(
-                        `RACE CONDITION @ 0x${c.addr.toString(16).toUpperCase()} (step ${c.step})`
+                        i18n.t('raceCondition')(c.addr.toString(16).toUpperCase(), c.step)
                     );
                 };
-                this.consoleView.success('Both CPUs assembled');
+                this.consoleView.success(i18n.t('bothCPUsAssembled'));
                 this.updateUI();
             } catch (e) {
-                this.consoleView.error(`Assembly error: ${e.message}`);
+                this.consoleView.error(i18n.t('assemblyError')(e.message));
             }
         });
 
@@ -537,7 +625,7 @@ export class UIController {
             this.toolbar.setStepCount(0);
             this.consoleView.clear();
             this.terminalView.clear();
-            this.consoleView.info('Reset complete');
+            this.consoleView.info(i18n.t('resetComplete'));
         } else {
             this.cpu.reset();
             this.toolbar.enableExecution(false);
