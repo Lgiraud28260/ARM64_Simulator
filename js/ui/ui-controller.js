@@ -118,9 +118,19 @@ export class UIController {
                     } else {
                         expectedNum = BigInt(exp);
                     }
+                    // Display as signed if expected is negative
+                    let displayActual = actualNum.toString();
+                    if (typeof exp === 'string' && exp.startsWith('-')) {
+                        const signed = actualNum >= (1n << 63n)
+                            ? -(((~actualNum) & BigInt('0xFFFFFFFFFFFFFFFF')) + 1n)
+                            : actualNum;
+                        displayActual = signed.toString();
+                    } else if (typeof exp === 'string' && exp.startsWith('0x')) {
+                        displayActual = '0x' + actualNum.toString(16).toUpperCase();
+                    }
                     return {
                         pass: actualNum === expectedNum,
-                        actual: actualNum.toString()
+                        actual: displayActual
                     };
                 }
             }
