@@ -139,6 +139,12 @@ export class Executor {
         return this.registers.getW(index);
     }
 
+    // Read register with index 31 as Zero Register (not SP)
+    getRegZR(index, sf) {
+        if (index === 31) return 0n;
+        return this.getReg(index, sf);
+    }
+
     setReg(index, value, sf) {
         if (sf) this.registers.setX(index, value);
         else this.registers.setW(index, value);
@@ -722,7 +728,7 @@ export class Executor {
         const { sf, rd, rn, rm, cond } = decoded;
         const { N, Z, C, V } = this.registers;
         const take = evaluateCondition(cond, N, Z, C, V);
-        this.setReg(rd, take ? this.getReg(rn, sf) : this.getReg(rm, sf), sf);
+        this.setReg(rd, take ? this.getRegZR(rn, sf) : this.getRegZR(rm, sf), sf);
     }
 
     execCSINC(decoded) {
@@ -730,7 +736,7 @@ export class Executor {
         const { N, Z, C, V } = this.registers;
         const mask = sf ? MASK_64 : MASK_32;
         const take = evaluateCondition(cond, N, Z, C, V);
-        this.setReg(rd, take ? this.getReg(rn, sf) : ((this.getReg(rm, sf) + 1n) & mask), sf);
+        this.setReg(rd, take ? this.getRegZR(rn, sf) : ((this.getRegZR(rm, sf) + 1n) & mask), sf);
     }
 
     execCSINV(decoded) {
@@ -738,7 +744,7 @@ export class Executor {
         const { N, Z, C, V } = this.registers;
         const mask = sf ? MASK_64 : MASK_32;
         const take = evaluateCondition(cond, N, Z, C, V);
-        this.setReg(rd, take ? this.getReg(rn, sf) : ((~this.getReg(rm, sf)) & mask), sf);
+        this.setReg(rd, take ? this.getRegZR(rn, sf) : ((~this.getRegZR(rm, sf)) & mask), sf);
     }
 
     execCSNEG(decoded) {
@@ -746,7 +752,7 @@ export class Executor {
         const { N, Z, C, V } = this.registers;
         const mask = sf ? MASK_64 : MASK_32;
         const take = evaluateCondition(cond, N, Z, C, V);
-        this.setReg(rd, take ? this.getReg(rn, sf) : (((~this.getReg(rm, sf)) + 1n) & mask), sf);
+        this.setReg(rd, take ? this.getRegZR(rn, sf) : (((~this.getRegZR(rm, sf)) + 1n) & mask), sf);
     }
 
     execCSET(decoded) {
