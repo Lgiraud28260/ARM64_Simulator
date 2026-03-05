@@ -1,5 +1,6 @@
 // machine-code-view.js - Address | Bytes | Assembly display
 import { toHex32, toBin } from '../utils.js';
+import { i18n } from '../i18n.js';
 
 export class MachineCodeView {
     constructor(container) {
@@ -21,7 +22,7 @@ export class MachineCodeView {
     render() {
         const body = this.container.querySelector('.panel-body');
         if (this.instructions.length === 0) {
-            body.innerHTML = '<div style="padding:8px;color:var(--text-muted)">No program assembled</div>';
+            body.innerHTML = `<div style="padding:8px;color:var(--text-muted)">${i18n.t('noProgramAssembled')}</div>`;
             return;
         }
 

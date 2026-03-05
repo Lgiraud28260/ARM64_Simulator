@@ -90,6 +90,9 @@ const UI_STRINGS = {
         // Executor
         unhandledSyscall: (n) => `SVC #0 : syscall non gere ${n}\n`,
 
+        // Machine code
+        noProgramAssembled: 'Aucun programme assemble',
+
         // Misc
         error: (msg) => `Erreur : ${msg}`,
     },
@@ -181,6 +184,9 @@ const UI_STRINGS = {
 
         // Executor
         unhandledSyscall: (n) => `SVC #0: unhandled syscall ${n}\n`,
+
+        // Machine code
+        noProgramAssembled: 'No program assembled',
 
         // Misc
         error: (msg) => `Error: ${msg}`,
