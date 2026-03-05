@@ -92,7 +92,9 @@ export class CASMPanel {
         });
 
         detailEl.querySelector('#casm-load').addEventListener('click', () => {
-            const code = `// C↔ASM: ${ex.title}\n\n_start:\n${ex.asmCode.split('\n').map(l => '    ' + l).join('\n')}\n    BRK #0\n`;
+            const indented = ex.asmCode.split('\n').map(l => '    ' + l).join('\n');
+            const hasBrk = /BRK\s+#0/i.test(ex.asmCode);
+            const code = `// C↔ASM: ${ex.title}\n\n_start:\n${indented}${hasBrk ? '' : '\n    BRK #0'}\n`;
             this.callbacks.onLoadCode(code);
         });
     }
