@@ -726,28 +726,28 @@ done:
 // Expected: W0 = 40
 
 _start:
-ADR X0, a
-ADR X1, b
+ADR X0, vec_a
+ADR X1, vec_b
 
 // Your code here:
 
 
 B done
-a: .word 1, 2, 3, 4
-b: .word 2, 3, 4, 5
+vec_a: .word 1, 2, 3, 4
+vec_b: .word 2, 3, 4, 5
 done:
 `,
         solution: `_start:
-ADR X0, a
-ADR X1, b
+ADR X0, vec_a
+ADR X1, vec_b
 LD1 {V0.4S}, [X0]
 LD1 {V1.4S}, [X1]
 MUL V2.4S, V0.4S, V1.4S
 ADDV S3, V2.4S
 UMOV W0, V3.S[0]
 B done
-a: .word 1, 2, 3, 4
-b: .word 2, 3, 4, 5
+vec_a: .word 1, 2, 3, 4
+vec_b: .word 2, 3, 4, 5
 done:
 `,
         check: { reg: "X0", expected: "40" }
