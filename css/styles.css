@@ -674,23 +674,22 @@ body {
 }
 
 #terminal-panel .panel-header .terminal-title {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
 }
 
 #terminal-panel .panel-header .terminal-dots {
-    display: flex;
+    display: inline-flex;
+    align-items: center;
     gap: 4px;
-    flex-shrink: 0;
 }
 
 #terminal-panel .panel-header .terminal-dots span {
-    display: block;
+    display: inline-block;
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    flex-shrink: 0;
 }
 
 .dot-red { background: #ff5f56; }
