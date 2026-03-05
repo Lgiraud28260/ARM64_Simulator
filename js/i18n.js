@@ -22,7 +22,7 @@ const UI_STRINGS = {
         neonRegisters: 'NEON V0-V31',
         assemblyEditor: 'Editeur Assembleur',
         machineCode: 'Code Machine',
-        memory: 'Memoire',
+        memory: 'Mémoire',
         cacheL1: 'Cache L1',
         terminal: 'Terminal',
         console: 'Console',
@@ -32,31 +32,31 @@ const UI_STRINGS = {
 
         // Console messages
         assembling: 'Assemblage...',
-        noSourceCode: 'Pas de code source a assembler',
+        noSourceCode: 'Pas de code source à assembler',
         assembledSuccess: (n) => `${n} instruction${n !== 1 ? 's' : ''} assemblee${n !== 1 ? 's' : ''} avec succes`,
         assemblyError: (msg) => `Erreur d'assemblage : ${msg}`,
         lineError: (line, msg) => `Ligne ${line} : ${msg}`,
-        haltedMessage: 'Le programme est arrete. Faites Reset pour relancer.',
+        haltedMessage: 'Le programme est arreté. Faites Reset pour relancer.',
         noHistory: 'Plus d\'historique pour reculer',
         stopped: 'Arrete',
-        nothingToSave: 'Rien a sauvegarder',
+        nothingToSave: 'Rien à sauvegarder',
         savedAs: (name) => `Sauvegarde sous ${name}`,
         saveFailed: (msg) => `Echec sauvegarde : ${msg}`,
-        fileSavedAs: (name) => `Fichier sauvegarde sous ${name}`,
-        loadedFile: (name) => `Fichier charge : ${name}`,
+        fileSavedAs: (name) => `Fichier sauvegardé sous ${name}`,
+        loadedFile: (name) => `Fichier chargé : ${name}`,
         loadedExample: (name) => `Exemple charge : ${name}`,
         casmLoaded: 'Code C↔ASM charge — cliquez sur Assembler',
-        tutorialLoaded: 'Code du tutoriel charge — cliquez sur Assembler',
-        resetComplete: 'Reset termine',
-        bothCPUsAssembled: 'Les deux CPUs assembles',
+        tutorialLoaded: 'Code du tutoriel chargé — cliquez sur Assembler',
+        resetComplete: 'Reset terminé',
+        bothCPUsAssembled: 'Les deux CPUs assemblés',
         raceCondition: (addr, step) => `CONDITION DE COURSE @ 0x${addr} (pas ${step})`,
 
         // CPU messages
         endOfProgram: 'Fin du programme',
         breakpointLine: 'Point d\'arret atteint (ligne)',
-        haltedSVC: 'Programme arrete (SVC exit)',
+        haltedSVC: 'Programme arreté (SVC exit)',
         breakpointHit: 'Point d\'arret atteint',
-        maxSteps: 'Nombre max de pas depasse (boucle infinie possible)',
+        maxSteps: 'Nombre max de pas depassé (boucle infinie possible)',
 
         // Tutorial panel
         chapter: (n) => `Chapitre ${n}`,
@@ -69,29 +69,29 @@ const UI_STRINGS = {
         incorrect: (reg, actual, expected) => `✗ ${reg} = ${actual} (attendu : ${expected})`,
 
         // C↔ASM panel
-        allCategories: 'Toutes les categories',
-        loadAsmInEditor: 'Charger l\'ASM dans l\'editeur',
+        allCategories: 'Toutes les catégories',
+        loadAsmInEditor: 'Charger l\'ASM dans l\'éditeur',
 
         // Cache panel
         size: 'Taille :',
         line: 'Ligne :',
         assoc: 'Assoc :',
         direct: 'Direct',
-        recentAccesses: 'Derniers acces :',
+        recentAccesses: 'Derniers accès :',
         cacheStats: (h, m, r) => `Succes: ${h} | Echecs: ${m} | Taux: ${r}%`,
 
         // Multicore panel
         assembleBoth: 'Assembler les 2',
         activeCPU: (id) => `CPU actif : ${id}`,
-        noConflict: 'Aucun conflit detecte',
+        noConflict: 'Aucun conflit detecté',
         cpu0Code: '// Code CPU 0 ici...',
         cpu1Code: '// Code CPU 1 ici...',
 
         // Executor
-        unhandledSyscall: (n) => `SVC #0 : syscall non gere ${n}\n`,
+        unhandledSyscall: (n) => `SVC #0 : syscall non geré ${n}\n`,
 
         // Machine code
-        noProgramAssembled: 'Aucun programme assemble',
+        noProgramAssembled: 'Aucun programme assemblé',
 
         // Misc
         error: (msg) => `Erreur : ${msg}`,
