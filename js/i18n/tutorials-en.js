@@ -361,9 +361,10 @@ MOV X1, #0
 // Your loop here:
 
 
-B done
-chaine: .asciz "Bonjour ARM64"
 done:
+    BRK #0
+
+chaine: .asciz "Bonjour ARM64"
 `,
         solution: `_start:
 ADR X0, chaine
@@ -373,9 +374,10 @@ strlen_boucle:
     CBZ W2, done
     ADD X1, X1, #1
     B strlen_boucle
-B done
-chaine: .asciz "Bonjour ARM64"
 done:
+    BRK #0
+
+chaine: .asciz "Bonjour ARM64"
 `,
         check: { reg: "X1", expected: "13" }
     },
