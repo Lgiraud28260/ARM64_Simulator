@@ -259,19 +259,41 @@ export class UIController {
         this.updateUI();
     }
 
-    saveFile() {
+    async saveFile() {
         const code = this.editor.getValue();
         if (!code.trim()) {
             this.consoleView.warn('Nothing to save');
             return;
         }
-        const blob = new Blob([code], { type: 'text/plain' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'program.s';
-        a.click();
-        URL.revokeObjectURL(a.href);
-        this.consoleView.info('File saved as program.s');
+        // Use File System Access API if available (Chrome/Edge)
+        if (window.showSaveFilePicker) {
+            try {
+                const handle = await window.showSaveFilePicker({
+                    suggestedName: 'program.s',
+                    types: [{
+                        description: 'ARM64 Assembly',
+                        accept: { 'text/plain': ['.s', '.asm', '.S', '.txt'] }
+                    }]
+                });
+                const writable = await handle.createWritable();
+                await writable.write(code);
+                await writable.close();
+                this.consoleView.info(`Saved as ${handle.name}`);
+            } catch (e) {
+                if (e.name !== 'AbortError') {
+                    this.consoleView.error(`Save failed: ${e.message}`);
+                }
+            }
+        } else {
+            // Fallback for Safari/Firefox
+            const blob = new Blob([code], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'program.s';
+            a.click();
+            URL.revokeObjectURL(a.href);
+            this.consoleView.info('File saved as program.s');
+        }
     }
 
     loadFile(name, content) {
