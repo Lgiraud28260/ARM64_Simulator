@@ -3,6 +3,7 @@ import { decode, DecodeError } from './decoder.js';
 import { Executor, ExecutionError } from './executor.js';
 import { History } from '../history.js';
 import { SEGMENTS } from '../memory.js';
+import { i18n } from '../i18n.js';
 
 export class CPU {
     constructor(registers, memory) {
@@ -82,7 +83,7 @@ export class CPU {
         const codeEnd = SEGMENTS.CODE.start + this.instructionCount * 4;
         if (pc >= codeEnd || pc < SEGMENTS.CODE.start) {
             this.halted = true;
-            if (this.onHalt) this.onHalt('End of program');
+            if (this.onHalt) this.onHalt(i18n.t('endOfProgram'));
             return false;
         }
 
@@ -111,7 +112,7 @@ export class CPU {
             // Check for halt
             if (this.executor.halted) {
                 this.halted = true;
-                if (this.onHalt) this.onHalt('Program halted (SVC exit)');
+                if (this.onHalt) this.onHalt(i18n.t('haltedSVC'));
                 return false;
             }
 
@@ -119,7 +120,7 @@ export class CPU {
             if (this.executor.breakpoint) {
                 this.executor.breakpoint = false;
                 this.running = false;
-                if (this.onHalt) this.onHalt('Breakpoint hit');
+                if (this.onHalt) this.onHalt(i18n.t('breakpointHit'));
                 return false;
             }
 
@@ -171,7 +172,7 @@ export class CPU {
                 }
                 if (this.stepCount >= this.maxSteps) {
                     this.running = false;
-                    this.error = 'Maximum step count exceeded (possible infinite loop)';
+                    this.error = i18n.t('maxSteps');
                     if (this.onError) this.onError(this.error);
                     return;
                 }
