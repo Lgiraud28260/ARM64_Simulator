@@ -7,7 +7,9 @@ export class RegistersView {
         this.registers = registers;
         this.prevValues = {};
         this.rows = {};
+        this.format = 'hex'; // 'hex', 'dec', 'bin'
         this.build();
+        this.bindFormatButtons();
     }
 
     build() {
@@ -46,6 +48,29 @@ export class RegistersView {
         body.innerHTML = html;
     }
 
+    bindFormatButtons() {
+        this.container.querySelectorAll('.reg-fmt-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.container.querySelectorAll('.reg-fmt-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                this.format = btn.dataset.fmt;
+                this.update();
+            });
+        });
+    }
+
+    formatValue(val) {
+        const v = BigInt(val);
+        if (this.format === 'dec') {
+            return toSigned64(v).toString();
+        } else if (this.format === 'bin') {
+            // Show last 32 bits to keep it readable
+            const lo = v & 0xFFFFFFFFn;
+            return '0b' + lo.toString(2).padStart(32, '0');
+        }
+        return toHex(v);
+    }
+
     update() {
         const regs = this.registers;
 
@@ -55,7 +80,7 @@ export class RegistersView {
             const val = regs.getX(i);
             const hexEl = document.getElementById(`reg-hex-${name}`);
             const rowEl = document.getElementById(`reg-${name}`);
-            if (hexEl) hexEl.textContent = toHex(val);
+            if (hexEl) hexEl.textContent = this.formatValue(val);
             if (rowEl) {
                 const prevVal = this.prevValues[name];
                 if (prevVal !== undefined && prevVal !== val) {
@@ -70,7 +95,7 @@ export class RegistersView {
         const spVal = regs.getSP();
         const spHex = document.getElementById('reg-hex-SP');
         const spRow = document.getElementById('reg-SP');
-        if (spHex) spHex.textContent = toHex(spVal);
+        if (spHex) spHex.textContent = this.formatValue(spVal);
         if (spRow && this.prevValues['SP'] !== undefined && this.prevValues['SP'] !== spVal) {
             spRow.classList.add('flash');
             setTimeout(() => spRow.classList.remove('flash'), 1000);
@@ -81,7 +106,7 @@ export class RegistersView {
         const pcVal = regs.getPC();
         const pcHex = document.getElementById('reg-hex-PC');
         const pcRow = document.getElementById('reg-PC');
-        if (pcHex) pcHex.textContent = toHex(pcVal);
+        if (pcHex) pcHex.textContent = this.formatValue(pcVal);
         if (pcRow && this.prevValues['PC'] !== undefined && this.prevValues['PC'] !== pcVal) {
             pcRow.classList.add('flash');
             setTimeout(() => pcRow.classList.remove('flash'), 1000);

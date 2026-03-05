@@ -34,7 +34,8 @@
                 <option value="">Load Example...</option>
             </select>
 
-            <button class="toolbar-btn" id="btn-load-file">&#128194; Load File</button>
+            <button class="toolbar-btn" id="btn-load-file" title="Load .s/.asm file">&#128194; Load</button>
+            <button class="toolbar-btn" id="btn-save-file" title="Ctrl+S">&#128190; Save</button>
 
             <div class="toolbar-spacer"></div>
 
@@ -45,7 +46,14 @@
         <!-- Left: Registers -->
         <div id="left-column">
             <div class="panel" id="registers-panel">
-                <div class="panel-header">Registers</div>
+                <div class="panel-header">
+                    <span>Registers</span>
+                    <div class="reg-format-selector">
+                        <button class="reg-fmt-btn active" data-fmt="hex">Hex</button>
+                        <button class="reg-fmt-btn" data-fmt="dec">Dec</button>
+                        <button class="reg-fmt-btn" data-fmt="bin">Bin</button>
+                    </div>
+                </div>
                 <div class="panel-body"></div>
             </div>
 

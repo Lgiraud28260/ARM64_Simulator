@@ -1,4 +1,5 @@
 // editor.js - Syntax-highlighted editor (textarea + pre overlay)
+import { TOOLTIPS } from '../instruction-tooltips.js';
 
 export class Editor {
     constructor(container) {
@@ -142,12 +143,13 @@ export class Editor {
         const mnemonics = 'MOV|MOVZ|MOVK|MOVN|ADD|ADDS|SUB|SUBS|MUL|SDIV|UDIV|MADD|MSUB|AND|ANDS|ORR|EOR|BIC|BICS|ORN|EON|LSL|LSR|ASR|ROR|NEG|NEGS|MVN|ADC|ADCS|SBC|SBCS|CMP|CMN|TST|LDR|STR|LDRB|STRB|LDRH|STRH|LDRSB|LDRSH|LDRSW|LDP|STP|B\\.\\w+|BL|BR|BLR|RET|CBZ|CBNZ|TBZ|TBNZ|CSEL|CSINC|CSINV|CSNEG|CSET|CSETM|CINC|CINV|CNEG|SVC|NOP|BRK|ADR|ADRP|MSR|MRS|LD1|ST1|DUP|INS|UMOV|MOVI|ADDV|CMEQ|CMGT|CMGE|FADD|FSUB|FMUL|FDIV|NOT';
         const mnRe = new RegExp(`\\b(${mnemonics})\\b(?![.:])`, 'gi');
         html = html.replace(mnRe, (match) => {
-            // Don't re-highlight if already inside a span
-            return `<span class="syn-mnemonic">${match}</span>`;
+            const tip = TOOLTIPS[match.toUpperCase()] || '';
+            const titleAttr = tip ? ` title="${tip}"` : '';
+            return `<span class="syn-mnemonic"${titleAttr}>${match}</span>`;
         });
 
         // Also highlight standalone B as mnemonic (tricky because it's one letter)
-        html = html.replace(/(?<=^\s*|:\s*)\b(B)\b(?!\.)(?!\w)/gi, '<span class="syn-mnemonic">$1</span>');
+        html = html.replace(/(?<=^\s*|:\s*)\b(B)\b(?!\.)(?!\w)/gi, `<span class="syn-mnemonic" title="${TOOLTIPS.B || ''}">$1</span>`);
 
         // Brackets and braces
         html = html.replace(/([[\]!{}])/g, '<span class="syn-bracket">$1</span>');

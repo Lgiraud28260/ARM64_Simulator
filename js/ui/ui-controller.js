@@ -114,6 +114,12 @@ export class UIController {
             });
         }
 
+        // Save file button
+        const btnSaveFile = document.getElementById('btn-save-file');
+        if (btnSaveFile) {
+            btnSaveFile.addEventListener('click', () => this.saveFile());
+        }
+
         // CPU callbacks
         this.cpu.onStep = (count) => {
             this.updateUI();
@@ -253,6 +259,21 @@ export class UIController {
         this.updateUI();
     }
 
+    saveFile() {
+        const code = this.editor.getValue();
+        if (!code.trim()) {
+            this.consoleView.warn('Nothing to save');
+            return;
+        }
+        const blob = new Blob([code], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'program.s';
+        a.click();
+        URL.revokeObjectURL(a.href);
+        this.consoleView.info('File saved as program.s');
+    }
+
     loadFile(name, content) {
         this.editor.setValue(content);
         this.consoleView.clear();
@@ -306,6 +327,9 @@ export class UIController {
         } else if (e.key === 'r' && (e.ctrlKey || e.metaKey) && e.shiftKey) {
             e.preventDefault();
             this.reset();
+        } else if (e.key === 's' && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
+            e.preventDefault();
+            this.saveFile();
         }
     }
 
