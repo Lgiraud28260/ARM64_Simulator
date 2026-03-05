@@ -49,6 +49,7 @@ export class TutorialPanel {
 
         const exercises = TUTORIALS.filter(t => t.chapter === ch);
         this.listEl.innerHTML = '';
+        this.listEl.style.display = '';
         this.detailEl.style.display = 'none';
 
         for (let i = 0; i < exercises.length; i++) {
