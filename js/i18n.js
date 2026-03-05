@@ -5,9 +5,9 @@ const UI_STRINGS = {
     fr: {
         // Toolbar
         assemble: 'Assembler',
-        step: 'Pas',
+        step: 'Avancer',
         stepBack: 'Reculer',
-        run: 'Lancer',
+        run: 'Run',
         stop: 'Stop',
         reset: 'Reset',
         speed: 'Vitesse :',
@@ -33,18 +33,18 @@ const UI_STRINGS = {
         // Console messages
         assembling: 'Assemblage...',
         noSourceCode: 'Pas de code source à assembler',
-        assembledSuccess: (n) => `${n} instruction${n !== 1 ? 's' : ''} assemblee${n !== 1 ? 's' : ''} avec succes`,
+        assembledSuccess: (n) => `${n} instruction${n !== 1 ? 's' : ''} assemblée${n !== 1 ? 's' : ''} avec succès`,
         assemblyError: (msg) => `Erreur d'assemblage : ${msg}`,
         lineError: (line, msg) => `Ligne ${line} : ${msg}`,
         haltedMessage: 'Le programme est arreté. Faites Reset pour relancer.',
         noHistory: 'Plus d\'historique pour reculer',
-        stopped: 'Arrete',
+        stopped: 'Arreté',
         nothingToSave: 'Rien à sauvegarder',
         savedAs: (name) => `Sauvegarde sous ${name}`,
         saveFailed: (msg) => `Echec sauvegarde : ${msg}`,
         fileSavedAs: (name) => `Fichier sauvegardé sous ${name}`,
         loadedFile: (name) => `Fichier chargé : ${name}`,
-        loadedExample: (name) => `Exemple charge : ${name}`,
+        loadedExample: (name) => `Exemple chargé : ${name}`,
         casmLoaded: 'Code C↔ASM charge — cliquez sur Assembler',
         tutorialLoaded: 'Code du tutoriel chargé — cliquez sur Assembler',
         resetComplete: 'Reset terminé',
@@ -53,9 +53,9 @@ const UI_STRINGS = {
 
         // CPU messages
         endOfProgram: 'Fin du programme',
-        breakpointLine: 'Point d\'arret atteint (ligne)',
+        breakpointLine: 'Point d\'arrêt atteint (ligne)',
         haltedSVC: 'Programme arreté (SVC exit)',
-        breakpointHit: 'Point d\'arret atteint',
+        breakpointHit: 'Point d\'arrêt atteint',
         maxSteps: 'Nombre max de pas depassé (boucle infinie possible)',
 
         // Tutorial panel
@@ -78,7 +78,7 @@ const UI_STRINGS = {
         assoc: 'Assoc :',
         direct: 'Direct',
         recentAccesses: 'Derniers accès :',
-        cacheStats: (h, m, r) => `Succes: ${h} | Echecs: ${m} | Taux: ${r}%`,
+        cacheStats: (h, m, r) => `Succès: ${h} | Echecs: ${m} | Taux: ${r}%`,
 
         // Multicore panel
         assembleBoth: 'Assembler les 2',
