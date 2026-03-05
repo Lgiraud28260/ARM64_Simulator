@@ -18,6 +18,8 @@ A browser-based interactive simulator for the ARM64 (AArch64) instruction set, b
 - **Terminal output** — SVC-based console I/O
 - **Load file** — import `.s` / `.asm` files from disk
 - **Built-in examples** — Fibonacci, factorial, string operations, and more
+- **Interactive tutorials** — 25 guided exercises across 8 chapters with hints and auto-checking
+- **Keyboard shortcuts** — F5 Run, F10 Step, Shift+F10 Step Back, F9 Breakpoint, Ctrl+Enter Assemble
 
 ## Supported Instructions
 

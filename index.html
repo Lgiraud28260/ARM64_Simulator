@@ -12,13 +12,13 @@
         <div id="toolbar">
             <h1>ARM64v8 Simulator</h1>
 
-            <button class="toolbar-btn primary" id="btn-assemble">Assemble</button>
+            <button class="toolbar-btn primary" id="btn-assemble" title="Ctrl+Enter">Assemble</button>
             <div class="toolbar-separator"></div>
 
-            <button class="toolbar-btn" id="btn-step" disabled>Step</button>
-            <button class="toolbar-btn" id="btn-step-back" disabled>Step Back</button>
-            <button class="toolbar-btn" id="btn-run" disabled>Run</button>
-            <button class="toolbar-btn danger" id="btn-reset">Reset</button>
+            <button class="toolbar-btn" id="btn-step" disabled title="F10">Step</button>
+            <button class="toolbar-btn" id="btn-step-back" disabled title="Shift+F10">Step Back</button>
+            <button class="toolbar-btn" id="btn-run" disabled title="F5">Run</button>
+            <button class="toolbar-btn danger" id="btn-reset" title="Ctrl+Shift+R">Reset</button>
 
             <div class="toolbar-separator"></div>
 
@@ -92,8 +92,16 @@
             </div>
         </div>
 
-        <!-- Bottom Row: Terminal + Console -->
+        <!-- Bottom Row: Tutorial + Terminal + Console -->
         <div id="bottom-row">
+            <!-- Tutorial panel -->
+            <div class="panel" id="tutorial-panel">
+                <div class="panel-header">
+                    <span>📖 Tutorial</span>
+                </div>
+                <div class="panel-body" id="tutorial-content"></div>
+            </div>
+
             <!-- Terminal: program output (SVC write) -->
             <div class="panel" id="terminal-panel">
                 <div class="panel-header">

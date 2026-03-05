@@ -46,7 +46,7 @@ body {
 #app {
     display: grid;
     grid-template-columns: 240px 1fr 340px;
-    grid-template-rows: auto 1fr minmax(150px, 200px);
+    grid-template-rows: auto 1fr minmax(180px, 250px);
     height: 100vh;
     gap: var(--gap);
     padding: var(--gap);
@@ -600,12 +600,12 @@ body {
     background: rgba(0, 255, 120, 0.05);
 }
 
-/* Bottom Row: Terminal + Console side by side */
+/* Bottom Row: Tutorial + Terminal + Console */
 #bottom-row {
     grid-column: 1 / -1;
     grid-row: 3;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 280px 1fr 1fr;
     gap: var(--gap);
     min-height: 0;
 }
@@ -752,6 +752,150 @@ body {
 
 .register-row.flash {
     animation: flash 1s ease-out;
+}
+
+/* Tutorial Panel */
+#tutorial-panel {
+    min-height: 0;
+}
+
+#tutorial-content {
+    padding: 4px 6px;
+    overflow-y: auto;
+}
+
+.tutorial-nav {
+    display: flex;
+    gap: 3px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+}
+
+.tutorial-ch-btn {
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg-input);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tutorial-ch-btn.active {
+    background: var(--accent-blue);
+    color: var(--bg-tertiary);
+    border-color: var(--accent-blue);
+}
+
+.tutorial-ch-btn:hover {
+    border-color: var(--accent-blue);
+}
+
+.tutorial-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.tutorial-item {
+    padding: 4px 6px;
+    font-size: 11px;
+    border-radius: 3px;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.tutorial-item:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.tutorial-item-num {
+    color: var(--accent-blue);
+    font-weight: 600;
+    margin-right: 4px;
+}
+
+.tutorial-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.tutorial-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tutorial-back-btn {
+    background: none;
+    border: none;
+    color: var(--accent-blue);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 0;
+}
+
+.tutorial-back-btn:hover {
+    text-decoration: underline;
+}
+
+.tutorial-num {
+    color: var(--accent-blue);
+    font-weight: 600;
+    font-size: 11px;
+}
+
+.tutorial-title {
+    color: var(--accent-yellow);
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.tutorial-desc {
+    color: var(--text-secondary);
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.tutorial-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.tutorial-btn {
+    font-size: 10px !important;
+    padding: 3px 8px !important;
+}
+
+.tutorial-hint {
+    font-size: 11px;
+    color: var(--accent-peach);
+    padding: 4px 6px;
+    background: rgba(250, 179, 135, 0.1);
+    border-radius: 3px;
+    line-height: 1.4;
+}
+
+.tutorial-result {
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.tutorial-pass {
+    color: var(--accent-green);
+}
+
+.tutorial-fail {
+    color: var(--accent-red);
 }
 
 /* Responsive adjustments */

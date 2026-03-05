@@ -11,6 +11,7 @@ import { ConsoleView } from './console-view.js';
 import { TerminalView } from './terminal-view.js';
 import { Toolbar } from './toolbar.js';
 import { NEONRegistersView } from './neon-view.js';
+import { TutorialPanel } from './tutorial-panel.js';
 import { EXAMPLES } from '../../examples/examples.js';
 
 export class UIController {
@@ -35,6 +36,47 @@ export class UIController {
             document.getElementById('terminal-panel'));
         this.neonView = new NEONRegistersView(
             document.getElementById('neon-registers-panel'), this.registers);
+
+        this.tutorialPanel = new TutorialPanel(
+            document.getElementById('tutorial-content'), {
+                onLoadCode: (code) => {
+                    this.editor.setValue(code);
+                    this.consoleView.clear();
+                    this.consoleView.info('Tutorial code loaded — click Assemble');
+                    this.cpu.reset();
+                    this.toolbar.enableExecution(false);
+                    this.machineCodeView.setInstructions([]);
+                    this.updateUI();
+                },
+                onCheckResult: (check) => {
+                    const regName = check.reg.toUpperCase();
+                    let actual;
+                    if (regName === 'PC') {
+                        actual = this.registers.getPC();
+                    } else if (regName === 'SP') {
+                        actual = this.registers.getSP();
+                    } else {
+                        const idx = parseInt(regName.replace(/^[XW]/, ''), 10);
+                        actual = this.registers.getX(idx);
+                    }
+                    const actualNum = typeof actual === 'bigint' ? actual : BigInt(actual);
+                    let expectedNum;
+                    const exp = check.expected;
+                    if (typeof exp === 'string' && exp.startsWith('0x')) {
+                        expectedNum = BigInt(exp);
+                    } else if (typeof exp === 'string' && exp.startsWith('-')) {
+                        // Negative: convert to unsigned 64-bit
+                        expectedNum = BigInt(exp) & BigInt('0xFFFFFFFFFFFFFFFF');
+                    } else {
+                        expectedNum = BigInt(exp);
+                    }
+                    return {
+                        pass: actualNum === expectedNum,
+                        actual: actualNum.toString()
+                    };
+                }
+            }
+        );
 
         // NEON view selector buttons
         document.querySelectorAll('.neon-view-btn').forEach(btn => {
@@ -93,6 +135,9 @@ export class UIController {
 
         // Breakpoint callback
         this.editor.onBreakpointChange = () => this.updateBreakpointAddresses();
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => this.handleKeyboard(e));
 
         // Initial state
         this.toolbar.enableExecution(false);
@@ -228,6 +273,39 @@ export class UIController {
             this.toolbar.enableExecution(false);
             this.machineCodeView.setInstructions([]);
             this.updateUI();
+        }
+    }
+
+    handleKeyboard(e) {
+        // F5 = Run/Stop, F10 = Step, F9 = toggle breakpoint
+        // Shift+F10 = Step Back, Ctrl+Shift+A = Assemble, Ctrl+R = Reset
+        if (e.key === 'F5') {
+            e.preventDefault();
+            this.runStop();
+        } else if (e.key === 'F10' && !e.shiftKey) {
+            e.preventDefault();
+            this.step();
+        } else if (e.key === 'F10' && e.shiftKey) {
+            e.preventDefault();
+            this.stepBack();
+        } else if (e.key === 'F9') {
+            e.preventDefault();
+            // Toggle breakpoint on current editor cursor line
+            const textarea = this.editor.textarea;
+            const lineNum = textarea.value.substring(0, textarea.selectionStart).split('\n').length;
+            if (this.editor.breakpoints.has(lineNum)) {
+                this.editor.breakpoints.delete(lineNum);
+            } else {
+                this.editor.breakpoints.add(lineNum);
+            }
+            this.editor.renderLineNumbers();
+            this.updateBreakpointAddresses();
+        } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            this.assemble();
+        } else if (e.key === 'r' && (e.ctrlKey || e.metaKey) && e.shiftKey) {
+            e.preventDefault();
+            this.reset();
         }
     }
 
