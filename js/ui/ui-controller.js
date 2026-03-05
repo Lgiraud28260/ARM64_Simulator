@@ -488,7 +488,7 @@ export class UIController {
         if (editorHeader) editorHeader.textContent = i18n.t('assemblyEditor');
 
         // Terminal header
-        const termHeader = document.querySelector('#terminal-panel .panel-header .terminal-title span');
+        const termHeader = document.querySelector('#terminal-panel .panel-header .terminal-title > span:last-child');
         if (termHeader) termHeader.textContent = i18n.t('terminal');
 
         // Bottom tabs
