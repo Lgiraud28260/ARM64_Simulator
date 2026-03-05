@@ -4,11 +4,6 @@ export const EXAMPLES = [
     {
         name: 'Hello World',
         code: `// Hello World - writes to console via SVC
-.data
-.asciz "Hello, ARM64!\\n"
-
-.text
-.global _start
 
 _start:
     // Setup write syscall
