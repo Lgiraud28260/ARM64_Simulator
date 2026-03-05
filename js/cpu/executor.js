@@ -17,6 +17,8 @@ export class Executor {
         this.consoleOutput = null; // callback for SVC output
         this.halted = false;
         this.breakpoint = false;
+        this.heap = null;    // set by UIController
+        this.virtualFS = null; // set by UIController
     }
 
     execute(decoded, pc) {
@@ -857,6 +859,71 @@ export class Executor {
                 if (this.consoleOutput) this.consoleOutput(str);
                 break;
             }
+            // Heap syscalls
+            case 0x200: { // malloc: X0=size → X0=addr
+                if (this.heap) {
+                    const size = Number(this.registers.getX(0));
+                    const addr = this.heap.malloc(size);
+                    this.registers.setX(0, BigInt(addr));
+                } else {
+                    this.registers.setX(0, 0n);
+                }
+                break;
+            }
+            case 0x201: { // free: X0=addr
+                if (this.heap) {
+                    const addr = Number(this.registers.getX(0));
+                    this.heap.free(addr);
+                }
+                break;
+            }
+
+            // File I/O syscalls
+            case 0x210: { // open: X0=filename_addr → X0=fd
+                if (this.virtualFS) {
+                    const nameAddr = Number(this.registers.getX(0));
+                    const fd = this.virtualFS.open(nameAddr);
+                    this.registers.setX(0, BigInt(fd));
+                } else {
+                    this.registers.setX(0, BigInt(-1));
+                }
+                break;
+            }
+            case 0x211: { // read: X0=fd, X1=buf, X2=count → X0=bytes_read
+                if (this.virtualFS) {
+                    const fd = Number(this.registers.getX(0));
+                    const buf = Number(this.registers.getX(1));
+                    const count = Number(this.registers.getX(2));
+                    const result = this.virtualFS.read(fd, buf, count);
+                    this.registers.setX(0, BigInt(result));
+                } else {
+                    this.registers.setX(0, BigInt(-1));
+                }
+                break;
+            }
+            case 0x212: { // write(fd>2): X0=fd, X1=buf, X2=count → X0=bytes_written
+                if (this.virtualFS) {
+                    const fd = Number(this.registers.getX(0));
+                    const buf = Number(this.registers.getX(1));
+                    const count = Number(this.registers.getX(2));
+                    const result = this.virtualFS.write(fd, buf, count);
+                    this.registers.setX(0, BigInt(result));
+                } else {
+                    this.registers.setX(0, BigInt(-1));
+                }
+                break;
+            }
+            case 0x213: { // close: X0=fd → X0=0/-1
+                if (this.virtualFS) {
+                    const fd = Number(this.registers.getX(0));
+                    const result = this.virtualFS.close(fd);
+                    this.registers.setX(0, BigInt(result));
+                } else {
+                    this.registers.setX(0, BigInt(-1));
+                }
+                break;
+            }
+
             default:
                 if (this.consoleOutput) {
                     this.consoleOutput(`SVC #0: unhandled syscall ${sysno}\n`);

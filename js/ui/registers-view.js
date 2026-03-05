@@ -71,47 +71,38 @@ export class RegistersView {
         return toHex(v);
     }
 
+    _updateRegRow(name, val) {
+        const hexEl = document.getElementById(`reg-hex-${name}`);
+        const rowEl = document.getElementById(`reg-${name}`);
+        if (hexEl) hexEl.textContent = this.formatValue(val);
+        if (rowEl) {
+            const prevVal = this.prevValues[name];
+            const changed = prevVal !== undefined && prevVal !== val;
+            rowEl.classList.toggle('reg-changed', changed);
+            rowEl.classList.toggle('reg-zero', val === 0n);
+            if (changed) {
+                rowEl.classList.remove('flash');
+                void rowEl.offsetWidth; // force reflow
+                rowEl.classList.add('flash');
+            }
+        }
+        this.prevValues[name] = val;
+    }
+
     update() {
         const regs = this.registers;
 
         // X0-X30
         for (let i = 0; i < 31; i++) {
             const name = `X${i.toString().padStart(2, '0')}`;
-            const val = regs.getX(i);
-            const hexEl = document.getElementById(`reg-hex-${name}`);
-            const rowEl = document.getElementById(`reg-${name}`);
-            if (hexEl) hexEl.textContent = this.formatValue(val);
-            if (rowEl) {
-                const prevVal = this.prevValues[name];
-                if (prevVal !== undefined && prevVal !== val) {
-                    rowEl.classList.add('flash');
-                    setTimeout(() => rowEl.classList.remove('flash'), 1000);
-                }
-            }
-            this.prevValues[name] = val;
+            this._updateRegRow(name, regs.getX(i));
         }
 
         // SP
-        const spVal = regs.getSP();
-        const spHex = document.getElementById('reg-hex-SP');
-        const spRow = document.getElementById('reg-SP');
-        if (spHex) spHex.textContent = this.formatValue(spVal);
-        if (spRow && this.prevValues['SP'] !== undefined && this.prevValues['SP'] !== spVal) {
-            spRow.classList.add('flash');
-            setTimeout(() => spRow.classList.remove('flash'), 1000);
-        }
-        this.prevValues['SP'] = spVal;
+        this._updateRegRow('SP', regs.getSP());
 
         // PC
-        const pcVal = regs.getPC();
-        const pcHex = document.getElementById('reg-hex-PC');
-        const pcRow = document.getElementById('reg-PC');
-        if (pcHex) pcHex.textContent = this.formatValue(pcVal);
-        if (pcRow && this.prevValues['PC'] !== undefined && this.prevValues['PC'] !== pcVal) {
-            pcRow.classList.add('flash');
-            setTimeout(() => pcRow.classList.remove('flash'), 1000);
-        }
-        this.prevValues['PC'] = pcVal;
+        this._updateRegRow('PC', regs.getPC());
 
         // Flags
         const flags = ['N', 'Z', 'C', 'V'];

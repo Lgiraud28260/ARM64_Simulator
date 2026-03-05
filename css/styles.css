@@ -319,6 +319,14 @@ body {
     background: var(--changed-highlight);
 }
 
+.register-row.reg-zero .reg-hex {
+    color: var(--text-muted);
+}
+
+.register-row.reg-changed .reg-hex {
+    color: var(--accent-green);
+}
+
 .reg-name {
     color: var(--accent-blue);
     width: 36px;
@@ -940,6 +948,339 @@ body {
 
 .tutorial-fail {
     color: var(--accent-red);
+}
+
+/* === Cache Panel === */
+#cache-panel {
+    flex: 0 0 auto;
+    min-height: 0;
+    max-height: 250px;
+}
+
+.cache-controls {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 4px 6px;
+    font-size: 10px;
+    flex-wrap: wrap;
+}
+
+.cache-controls select {
+    padding: 1px 4px;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    background: var(--bg-input);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+}
+
+.cache-stats {
+    padding: 2px 6px;
+    font-size: 11px;
+    color: var(--accent-teal);
+    font-weight: 600;
+}
+
+.cache-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding: 4px 6px;
+}
+
+.cache-cell {
+    width: 48px;
+    height: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+}
+
+.cache-cell.empty {
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+}
+
+.cache-cell.valid {
+    background: rgba(137, 180, 250, 0.15);
+    color: var(--accent-blue);
+}
+
+.cache-cell.hit {
+    background: rgba(166, 227, 161, 0.25);
+    color: var(--accent-green);
+    border-color: var(--accent-green);
+}
+
+.cache-cell.miss {
+    background: rgba(243, 139, 168, 0.25);
+    color: var(--accent-red);
+    border-color: var(--accent-red);
+}
+
+.cache-tag {
+    font-size: 7px;
+    opacity: 0.7;
+}
+
+.cache-log-title {
+    padding: 2px 6px;
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.cache-log {
+    padding: 0 6px 4px;
+    font-size: 10px;
+}
+
+.cache-log-entry {
+    padding: 1px 0;
+}
+
+.cache-hit {
+    color: var(--accent-green);
+    font-weight: 600;
+}
+
+.cache-miss {
+    color: var(--accent-red);
+    font-weight: 600;
+}
+
+/* === C↔ASM Panel === */
+.bottom-tabs {
+    display: flex;
+    gap: 2px;
+}
+
+.bottom-tab {
+    padding: 2px 8px;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.bottom-tab.active {
+    background: var(--accent-blue);
+    color: var(--bg-tertiary);
+    border-color: var(--accent-blue);
+}
+
+.casm-controls {
+    padding: 4px 6px;
+}
+
+.casm-controls select {
+    padding: 2px 6px;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    background: var(--bg-input);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+}
+
+.casm-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.casm-item {
+    padding: 3px 6px;
+    font-size: 11px;
+    cursor: pointer;
+    border-radius: 3px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.casm-item:hover {
+    background: var(--bg-hover);
+}
+
+.casm-cat {
+    font-size: 9px;
+    padding: 1px 4px;
+    background: var(--bg-input);
+    border-radius: 2px;
+    color: var(--accent-mauve);
+    flex-shrink: 0;
+}
+
+.casm-title {
+    color: var(--text-primary);
+}
+
+.casm-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.casm-detail-title {
+    font-weight: 600;
+    color: var(--accent-yellow);
+}
+
+.casm-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+}
+
+.casm-pane {
+    background: var(--bg-secondary);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.casm-pane-title {
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 6px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    background: var(--bg-tertiary);
+}
+
+.casm-code {
+    font-size: 10px;
+    padding: 4px 6px;
+    line-height: 1.4;
+    overflow-x: auto;
+    margin: 0;
+}
+
+.c-keyword { color: var(--accent-blue); font-weight: 600; }
+.c-comment { color: var(--text-muted); font-style: italic; }
+.c-number { color: var(--accent-green); }
+
+.casm-notes {
+    font-size: 10px;
+    color: var(--accent-peach);
+    padding: 4px 6px;
+    background: rgba(250, 179, 135, 0.08);
+    border-radius: 3px;
+    line-height: 1.4;
+}
+
+/* === Multi-core Panel === */
+#multicore-panel .panel-body {
+    padding: 4px;
+}
+
+.mc-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    height: 100%;
+}
+
+.mc-cpu-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: var(--bg-secondary);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.mc-cpu-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--bg-tertiary);
+}
+
+.mc-cpu-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.mc-cpu0-dot { background: var(--accent-blue); }
+.mc-cpu1-dot { background: var(--accent-peach); }
+
+.mc-editor {
+    flex: 1;
+    min-height: 120px;
+    padding: 6px 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.4;
+    background: var(--bg-panel);
+    color: var(--text-primary);
+    border: none;
+    outline: none;
+    resize: none;
+}
+
+.mc-regs {
+    padding: 4px 6px;
+    font-size: 9px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    background: var(--bg-tertiary);
+}
+
+.mc-reg-zero { color: var(--text-muted); }
+.mc-reg-val { color: var(--accent-green); }
+.mc-reg-pc { color: var(--accent-blue); font-weight: 600; }
+
+.mc-info {
+    padding: 4px 6px;
+    font-size: 10px;
+}
+
+.mc-active {
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.mc-conflicts {
+    margin-bottom: 4px;
+}
+
+.mc-no-conflict {
+    color: var(--accent-green);
+}
+
+.mc-conflict-entry {
+    color: var(--accent-red);
+    font-weight: 600;
+    padding: 1px 0;
+}
+
+.mc-access-log {
+    font-size: 9px;
+    line-height: 1.5;
+}
+
+.mc-log-cpu0 { color: var(--accent-blue); }
+.mc-log-cpu1 { color: var(--accent-peach); }
+
+/* Dual-core button active state */
+.active-toggle {
+    background: var(--accent-mauve) !important;
+    color: var(--bg-tertiary) !important;
+    border-color: var(--accent-mauve) !important;
 }
 
 /* Responsive adjustments */

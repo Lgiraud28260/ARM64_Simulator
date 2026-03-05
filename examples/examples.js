@@ -544,6 +544,166 @@ vec_result:
 `
     },
     {
+        name: 'Dynamic Array (malloc)',
+        code: `// Dynamic Array - malloc/free demo
+// Syscalls: 0x200=malloc, 0x201=free
+// Allocates an array, fills it, sums it, then frees
+
+_start:
+    // Allocate 5 * 8 = 40 bytes
+    MOV X0, #40
+    MOV X8, #0x200       // malloc
+    SVC #0               // X0 = heap address
+
+    MOV X19, X0          // save base pointer
+    CBZ X0, alloc_fail   // check for NULL
+
+    // Fill array: arr[i] = (i+1) * 10
+    MOV X1, #0           // index
+    MOV X2, #5           // count
+fill_loop:
+    CBZ X2, sum_array
+    ADD X3, X1, #1
+    MOV X4, #10
+    MUL X3, X3, X4       // (i+1) * 10
+    LSL X5, X1, #3       // offset = i * 8
+    ADD X5, X5, X19      // addr
+    STR X3, [X5]
+    ADD X1, X1, #1
+    SUB X2, X2, #1
+    B fill_loop
+
+sum_array:
+    // Sum the array
+    MOV X20, #0          // sum = 0
+    MOV X1, #0           // index
+    MOV X2, #5           // count
+sum_loop:
+    CBZ X2, print_result
+    LSL X5, X1, #3
+    ADD X5, X5, X19
+    LDR X3, [X5]
+    ADD X20, X20, X3
+    ADD X1, X1, #1
+    SUB X2, X2, #1
+    B sum_loop
+
+print_result:
+    // Print "Sum = "
+    ADR X0, sum_label
+    MOV X8, #0x105
+    SVC #0
+    MOV X0, X20          // sum = 10+20+30+40+50 = 150
+    MOV X8, #0x100
+    SVC #0
+    MOV X8, #0x104
+    SVC #0
+
+    // Free the array
+    MOV X0, X19
+    MOV X8, #0x201       // free
+    SVC #0
+
+    ADR X0, done_msg
+    MOV X8, #0x105
+    SVC #0
+
+    MOV X8, #93
+    MOV X0, #0
+    SVC #0
+
+alloc_fail:
+    ADR X0, fail_msg
+    MOV X8, #0x105
+    SVC #0
+    MOV X8, #93
+    MOV X0, #1
+    SVC #0
+
+sum_label:
+    .asciz "Sum = "
+done_msg:
+    .asciz "Memory freed. Done!\\n"
+fail_msg:
+    .asciz "Allocation failed!\\n"
+`
+    },
+    {
+        name: 'File I/O',
+        code: `// File I/O - Virtual filesystem demo
+// Syscalls: 0x210=open, 0x211=read, 0x212=write, 0x213=close
+// Reads from "hello.txt" (pre-existing), writes to "output.txt"
+
+_start:
+    // Open hello.txt for reading
+    ADR X0, fname_in
+    MOV X8, #0x210       // open
+    SVC #0
+    MOV X19, X0          // fd_in
+
+    // Read into buffer (up to 64 bytes)
+    MOV X0, X19
+    ADR X1, buffer
+    MOV X2, #64
+    MOV X8, #0x211       // read
+    SVC #0
+    MOV X20, X0          // bytes_read
+
+    // Close input file
+    MOV X0, X19
+    MOV X8, #0x213       // close
+    SVC #0
+
+    // Print what we read
+    ADR X0, read_label
+    MOV X8, #0x105
+    SVC #0
+
+    ADR X0, buffer
+    MOV X8, #0x105
+    SVC #0
+
+    // Open output.txt for writing
+    ADR X0, fname_out
+    MOV X8, #0x210       // open
+    SVC #0
+    MOV X19, X0          // fd_out
+
+    // Write "Written by ARM64!\\n" to output.txt
+    MOV X0, X19
+    ADR X1, write_data
+    MOV X2, #19          // length
+    MOV X8, #0x212       // write
+    SVC #0
+
+    // Close output file
+    MOV X0, X19
+    MOV X8, #0x213       // close
+    SVC #0
+
+    ADR X0, done_msg
+    MOV X8, #0x105
+    SVC #0
+
+    MOV X8, #93
+    MOV X0, #0
+    SVC #0
+
+fname_in:
+    .asciz "hello.txt"
+fname_out:
+    .asciz "output.txt"
+read_label:
+    .asciz "Read from file: "
+write_data:
+    .asciz "Written by ARM64!\\n"
+done_msg:
+    .asciz "File I/O complete!\\n"
+buffer:
+    .quad 0, 0, 0, 0, 0, 0, 0, 0
+`
+    },
+    {
         name: 'NEON Matrix Multiply',
         code: `// NEON Matrix Multiply 3x3
 // Uses LD1/MUL/ADDV/ST1 for vectorized dot products

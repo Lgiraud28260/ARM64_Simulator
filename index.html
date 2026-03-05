@@ -37,6 +37,9 @@
             <button class="toolbar-btn" id="btn-load-file" title="Load .s/.asm file">&#128194; Load</button>
             <button class="toolbar-btn" id="btn-save-file" title="Ctrl+S">&#128190; Save</button>
 
+            <div class="toolbar-separator"></div>
+            <button class="toolbar-btn" id="btn-dual-core" title="Toggle dual-core mode">Dual Core</button>
+
             <div class="toolbar-spacer"></div>
 
             <span class="status-indicator idle" id="status-indicator"></span>
@@ -98,16 +101,40 @@
                 </div>
                 <div class="panel-body"></div>
             </div>
+
+            <!-- Cache -->
+            <div class="panel" id="cache-panel">
+                <div class="panel-header">
+                    <span>Cache L1</span>
+                </div>
+                <div class="panel-body"></div>
+            </div>
+        </div>
+
+        <!-- Multicore overlay (hidden by default) -->
+        <div id="multicore-panel" class="panel" style="display:none;grid-column:1/-1;grid-row:2;">
+            <div class="panel-header">
+                <span>Dual Core</span>
+                <button class="toolbar-btn" id="mc-assemble" style="padding:2px 8px;font-size:10px">Assemble Both</button>
+                <button class="toolbar-btn" id="mc-step" style="padding:2px 8px;font-size:10px">Step</button>
+                <button class="toolbar-btn" id="mc-run" style="padding:2px 8px;font-size:10px">Run</button>
+                <button class="toolbar-btn danger" id="mc-reset" style="padding:2px 8px;font-size:10px">Reset</button>
+            </div>
+            <div class="panel-body"></div>
         </div>
 
         <!-- Bottom Row: Tutorial + Terminal + Console -->
         <div id="bottom-row">
-            <!-- Tutorial panel -->
+            <!-- Tutorial / C↔ASM panel -->
             <div class="panel" id="tutorial-panel">
                 <div class="panel-header">
-                    <span>📖 Tutorial</span>
+                    <div class="bottom-tabs">
+                        <button class="bottom-tab active" data-tab="tutorial">Tutorial</button>
+                        <button class="bottom-tab" data-tab="casm">C↔ASM</button>
+                    </div>
                 </div>
                 <div class="panel-body" id="tutorial-content"></div>
+                <div class="panel-body" id="casm-content" style="display:none"></div>
             </div>
 
             <!-- Terminal: program output (SVC write) -->
