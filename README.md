@@ -81,6 +81,18 @@ python3 app.py
 └── tests/              # Test suite
 ```
 
+## Compatibility
+
+The assembler uses **standard ARM64 syntax**, compatible with both Apple (`as`) and GNU (`gas`) conventions:
+
+- Labels work with or without `_` prefix (`_main:` and `main:` are both valid)
+- Both `.globl` and `.global` directives are supported
+- NEON/SIMD syntax follows the official ARM notation (`V0.4S`, `V2.S[0]`)
+- Comments: `//` and `;` styles
+- No platform-specific output — the simulator executes directly, no Mach-O or ELF involved
+
+Code written in this simulator can be assembled on both **macOS (Apple Silicon)** and **Linux ARM64** with minimal changes (mainly entry point and section directives).
+
 ## License
 
 Apache License 2.0 — see [LICENSE](LICENSE) for details.
